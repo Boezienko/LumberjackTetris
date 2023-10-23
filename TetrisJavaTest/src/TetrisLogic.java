@@ -38,7 +38,15 @@ public class TetrisLogic {
                 currentPiece.move(1, 0);
                 break;
             case DOWN:
-                currentPiece.move(0, 1);
+            // If down is pressed, and it can move down, it moves down
+            // If it can't, add to gravity success to speed up adding it to the board
+                if(!currentPiece.move(0, 1)){
+                    if(currentPiece.gravitySuccess(false)){
+                        currentPiece.addToBoard(board);
+                        spawnTetromino();
+                    }
+                }
+                
                 break;
             case UP:
                 currentPiece.rotate();
@@ -64,9 +72,17 @@ public class TetrisLogic {
     private void update() {
         if (currentPiece.canMove(0, 1)) {
             currentPiece.move(0, 1);
+            // Piece successfully moved, reset the counter
+            currentPiece.gravitySuccess(true);
         } else {
-            currentPiece.addToBoard(board);
-            spawnTetromino();
+            // If gravitySuccess returns true, force drop the piece
+            if(currentPiece.gravitySuccess(false)){
+                currentPiece.addToBoard(board);
+                spawnTetromino();
+            }
+            
+            
+            
         }
         drawBoard();
     }

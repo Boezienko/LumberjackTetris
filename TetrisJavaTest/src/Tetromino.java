@@ -8,6 +8,7 @@ public abstract class Tetromino {
     private Color color;
     private int[][] board;
     protected int colorBoard;
+    private int playerMoveTime;
 
     //Constructor. contains the shape of the piece, the color, and the current state of the board
     public Tetromino(int[][] shape, Color color, int[][] board) {
@@ -40,11 +41,13 @@ public abstract class Tetromino {
     }
 
     // Moves the block, if can move is true
-    public void move(int dx, int dy) {
+    public boolean move(int dx, int dy) {
         if (canMove(dx, dy)) {
             x += dx;
             y += dy;
+            return true;
         }
+        return false;
     }
 
     // Rotates the block, if can rotate is true
@@ -109,5 +112,23 @@ public abstract class Tetromino {
                 }
             }
         }
+    }
+
+    // Determines if the player is allowed to move the piece while on the ground
+    public boolean gravitySuccess(boolean moved){
+        // If the piece successfully moved down (true), reset the counter. else, add 1
+        if(moved){
+            playerMoveTime = 0;
+        }
+        else{
+            playerMoveTime++;
+        }
+        // If the count has reached 4, return true (used to force the piece to drop)
+        if(playerMoveTime > 3){
+            playerMoveTime = 0;
+            return true;
+            
+        }
+        return false;
     }
 }
