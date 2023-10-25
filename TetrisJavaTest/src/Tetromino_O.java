@@ -6,5 +6,10 @@ public class Tetromino_O extends Tetromino{
         super(Shapes.O, Color.YELLOW.darker(), board);
         super.colorBoard = 2;
     }
+
+    @Override
+    public void rotate(){
+        //Do nothing. Squares don't rotate.
+    }
     
 }

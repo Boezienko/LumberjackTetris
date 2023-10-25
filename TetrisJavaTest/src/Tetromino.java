@@ -1,7 +1,14 @@
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-// Abstract Tetromino method. all the pieces extend from this one.
+/*  Abstract Tetromino method. all the pieces extend from this one.
+// This class contains the shape of the piece, it's xy location, the color, 
+// a reference to the board, a representation of the color that will be added to the board,
+// and a move time incrementor
+//
+// This class is designed to be used without necessarily having to override everything,
+// but for a good playing experience, overriding the rotations is useful in using the "Super Rotation System"
+*/
 public abstract class Tetromino {
     private int[][] shape;
     private int x, y;
@@ -22,12 +29,12 @@ public abstract class Tetromino {
 
     // Returns true if the piece can move to the given delta of its position. False if Imposible
     // Used in determining if the player can move, or if gravity can push the object down
-    public boolean canMove(int dx, int dy) {
+    public boolean canMove(int dx, int dy, int[][] newShape){
         // for loop iterating over each piece of the tetromino's array
-        for (int i = 0; i < shape.length; i++) {
-            for (int j = 0; j < shape[i].length; j++) {
+        for (int i = 0; i < newShape.length; i++) {
+            for (int j = 0; j < newShape[i].length; j++) {
                 // ignoring the 0's, as they are blank space
-                if (shape[i][j] != 0) {
+                if (newShape[i][j] != 0) {
                     // check if the new x or y overlap existing blocks or corners
                     int newX = x + j + dx;
                     int newY = y + i + dy;
@@ -38,9 +45,15 @@ public abstract class Tetromino {
             }
         }
         return true;
+
     }
 
-    // Moves the block, if can move is true
+    // overloaded method for canMove. if newShape not given, assume we want to use the current shape
+    public boolean canMove(int dx, int dy) {
+        return canMove(dx, dy, shape);
+    }
+
+    // Moves the block, if can move is true. If successfully moves, returns true.
     public boolean move(int dx, int dy) {
         if (canMove(dx, dy)) {
             x += dx;
@@ -60,6 +73,7 @@ public abstract class Tetromino {
                 newShape[j][shape.length - 1 - i] = shape[i][j];
             }
         }
+        //TODO: Accept SRS
         // check if this new tile can fit where it was just created. if not, don't rotate
         if (canRotate(newShape)) {
             shape = newShape;
@@ -68,21 +82,8 @@ public abstract class Tetromino {
 
     // Returns true if the given new shape can fit where it was created
     public boolean canRotate(int[][] newShape) {
-        //iterate over the whole array
-        for (int i = 0; i < newShape.length; i++) {
-            for (int j = 0; j < newShape[i].length; j++) {
-                // ignore empty tiles
-                if (newShape[i][j] != 0) {
-                    // check if the new x and y can fit in their given positions, if not, return false
-                    int newX = x + j;
-                    int newY = y + i;
-                    if (newX < 0 || newX >= TetrisFrame.WIDTH || newY >= TetrisFrame.HEIGHT || (newY >= 0 && board[newX][newY] != 0)) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
+        //TODO: Implement SRS
+        return canMove(0, 0, newShape);
     }
 
     // Draws the current piece to the canvas. called inside DrawBoard

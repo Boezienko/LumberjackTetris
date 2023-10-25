@@ -12,13 +12,14 @@ import javafx.stage.Stage;
 
 public class TetrisFrame {
     // Static ints used for sizes
-    public static final int TILE_SIZE = 30; // Size of the displayed tiles. Doesn't affect game
+    public static final int TILE_SIZE = 30; // Size of the displayed tiles. Doesn't affect game logic
     public static final int WIDTH = 10; // Width of the playing field
     public static final int HEIGHT = 20; // Height of the playing field
 
     // Instantiate the canvas and the gc of the canvas
     private Canvas canvas;
     private GraphicsContext gc;
+    
     private Stage stage;
     private Scene scene;
 
@@ -29,6 +30,8 @@ public class TetrisFrame {
     public TetrisFrame(Stage stage) {
         // pull in the stage argument
         this.stage = stage;
+
+       
 
         // Set the title and Icon
         stage.setTitle("OOP Tetris");

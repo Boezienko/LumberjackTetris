@@ -80,9 +80,6 @@ public class TetrisLogic {
                 currentPiece.addToBoard(board);
                 spawnTetromino();
             }
-            
-            
-            
         }
         drawBoard();
     }
