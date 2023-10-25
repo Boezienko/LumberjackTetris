@@ -8,7 +8,7 @@ public class Tetromino_O extends Tetromino{
     }
 
     @Override
-    public void rotate(){
+    public void rotate(boolean direction){
         //Do nothing. Squares don't rotate.
     }
     

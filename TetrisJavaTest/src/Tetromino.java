@@ -64,15 +64,28 @@ public abstract class Tetromino {
     }
 
     // Rotates the block, if can rotate is true
-    public void rotate() {
+    // If passing in true, rotate clockwise. if passing in false, rotate counter clockwise
+    public void rotate(boolean direction) {
         // creates a new shape with opposite length and width
         int[][] newShape = new int[shape[0].length][shape.length];
-        for (int i = 0; i < shape.length; i++) {
-            for (int j = 0; j < shape[i].length; j++) {
-                // write the tiles to the new array
-                newShape[j][shape.length - 1 - i] = shape[i][j];
+        // Rotates left or right given the rotation
+        if(direction){
+            for (int i = 0; i < shape.length; i++) {
+                for (int j = 0; j < shape[i].length; j++) {
+                    // write the tiles to the new array
+                    newShape[j][shape.length - 1 - i] = shape[i][j];
+                }   
             }
         }
+        else{
+            for (int i = 0; i < shape.length; i++) {
+                for (int j = 0; j < shape[i].length; j++) {
+                    // write the tiles to the new array
+                    newShape[shape.length - 1 - j][i] = shape[i][j];
+                }   
+            }
+        }
+        
         //TODO: Accept SRS
         // check if this new tile can fit where it was just created. if not, don't rotate
         if (canRotate(newShape)) {

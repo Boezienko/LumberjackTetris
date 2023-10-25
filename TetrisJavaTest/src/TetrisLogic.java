@@ -49,7 +49,10 @@ public class TetrisLogic {
                 
                 break;
             case UP:
-                currentPiece.rotate();
+                currentPiece.rotate(true);
+                break;
+            case Z:
+                currentPiece.rotate(false);
                 break;
             default:
                 break;
