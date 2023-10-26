@@ -73,6 +73,11 @@ public class TetrisLogic {
             case Z:
                 currentPiece.rotate(false);
                 break;
+            case SPACE:
+                currentPiece.hardDrop();
+                currentPiece.addToBoard(board);
+                spawnTetromino();
+                break;
             default:
                 break;
         }

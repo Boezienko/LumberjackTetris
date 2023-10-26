@@ -186,6 +186,17 @@ public abstract class Tetromino {
         }
     }
 
+    // Hard drops the tetromino. instantly sends it to the bottom, adds to board, and spawns a new tetromino
+    public void hardDrop(){
+        // Calculate the lowest position where the piece can move
+        int lowestY = 0;
+        while(canMove(0, lowestY)){
+            lowestY++;
+        }
+        // Move it to the lowest point
+        move(0, lowestY - 1);
+    }
+
     // Draws the current piece to the canvas. called inside DrawBoard
     public void draw(GraphicsContext gc) {
         gc.setFill(color);
