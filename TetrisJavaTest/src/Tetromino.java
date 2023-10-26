@@ -10,13 +10,13 @@ import javafx.scene.paint.Color;
 // but for a good playing experience, overriding the rotations/kicks is useful in using the "Super Rotation System"
 */
 public abstract class Tetromino {
-    private int[][] shape;
+    protected int[][] shape;
     private int x, y;
     private Color color;
     private int[][] board;
     protected int colorBoard;
     private int playerMoveTime;
-    private int rotation; // 0 is default, 1 is rotated clockwise, 2 is upside down, 3 is rotated counterclockwise.
+    protected int rotation; // 0 is default, 1 is rotated clockwise, 2 is upside down, 3 is rotated counterclockwise.
 
     //Constructor. contains the shape of the piece, the color, and the current state of the board
     public Tetromino(int[][] shape, Color color, int[][] board) {
