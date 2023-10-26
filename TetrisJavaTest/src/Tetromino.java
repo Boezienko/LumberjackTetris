@@ -104,7 +104,6 @@ public abstract class Tetromino {
 
     // Returns true if the given new shape can fit where it was created
     public boolean canRotate(int[][] newShape) {
-        //TODO: Implement SRS
         return canMove(0, 0, newShape);
     }
     // Kick will attempt to move the piece to a place where it can rotate.
@@ -196,6 +195,28 @@ public abstract class Tetromino {
                     int xPos = (x + j) * TetrisFrame.TILE_SIZE;
                     int yPos = (y + i) * TetrisFrame.TILE_SIZE;
                     gc.fillRect(xPos + 2, yPos + 2, TetrisFrame.TILE_SIZE - 2, TetrisFrame.TILE_SIZE - 2);
+                }
+            }
+        }
+    }
+    // Draws the shadow of the piece, where it would fall if hard dropped now
+    public void drawShadow(GraphicsContext gc){
+        gc.setStroke(color);
+
+        // Calculate the lowest position where the piece can move
+        int lowestY = 0;
+        while(canMove(0, lowestY)){
+            lowestY++;
+        }
+        // Loop through the shape and draw the outline of where it would land
+        for (int i = 0; i < shape.length; i++) {
+            for (int j = 0; j < shape[i].length; j++) {
+                if (shape[i][j] != 0) {
+                    // Draw the outline of the cell
+                    int xPos = (x + j) * TetrisFrame.TILE_SIZE;
+                    // y position is where it currently is + as far as it could be - 1 because arrays
+                    int yPos = (y + lowestY + i - 1) * TetrisFrame.TILE_SIZE;
+                    gc.strokeRect(xPos + 2, yPos + 2, TetrisFrame.TILE_SIZE - 2, TetrisFrame.TILE_SIZE - 2);
                 }
             }
         }

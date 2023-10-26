@@ -81,7 +81,7 @@ public class TetrisLogic {
 
     // Initializes the game. Creates the timeline, starts it, and then spawns the first Tetromino
     private void initializeGame() {
-        
+
         // Starts the movement of time. keyframe duration of 120 hz should update every 8.33 ms
         System.out.println((Math.round((1.00 / gameUpdateSpeed) * 100000)) / 100.00);
         timeline = new Timeline(new KeyFrame(Duration.millis((Math.round((1.00 / gameUpdateSpeed) * 100000)) / 100.00), e -> update()));
@@ -171,6 +171,7 @@ public class TetrisLogic {
 
         // Draws the current controlled piece
         currentPiece.draw(gc);
+        currentPiece.drawShadow(gc);
 
         // Iterates over the board array and draws each block
         for (int x = 0; x < TetrisFrame.WIDTH; x++) {
