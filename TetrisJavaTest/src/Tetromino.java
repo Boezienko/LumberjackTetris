@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 // and a move time incrementor
 //
 // This class is designed to be used without necessarily having to override everything,
-// but for a good playing experience, overriding the rotations is useful in using the "Super Rotation System"
+// but for a good playing experience, overriding the rotations/kicks is useful in using the "Super Rotation System"
 */
 public abstract class Tetromino {
     private int[][] shape;
@@ -16,6 +16,7 @@ public abstract class Tetromino {
     private int[][] board;
     protected int colorBoard;
     private int playerMoveTime;
+    private int rotation; // 0 is default, 1 is rotated clockwise, 2 is upside down, 3 is rotated counterclockwise.
 
     //Constructor. contains the shape of the piece, the color, and the current state of the board
     public Tetromino(int[][] shape, Color color, int[][] board) {
@@ -25,6 +26,7 @@ public abstract class Tetromino {
         // Sets the position to the middle top of the board
         x = TetrisFrame.WIDTH / 2 - shape[0].length / 2;
         y = 0;
+        rotation = 0;
     }
 
     // Returns true if the piece can move to the given delta of its position. False if Imposible
@@ -85,11 +87,18 @@ public abstract class Tetromino {
                 }   
             }
         }
-        
-        //TODO: Accept SRS
-        // check if this new tile can fit where it was just created. if not, don't rotate
+        // check if this new tile can fit where it was just created. if not, attempt to kick
         if (canRotate(newShape)) {
             shape = newShape;
+            // Update the rotation status
+            rotation = rotation + (direction ? 1 : -1);
+            if(rotation > 3){
+                rotation = 0;
+            } else if(rotation < 0){
+                rotation = 3;
+            }
+        }else{
+            kick(newShape, direction);
         }
     }
 
@@ -97,6 +106,85 @@ public abstract class Tetromino {
     public boolean canRotate(int[][] newShape) {
         //TODO: Implement SRS
         return canMove(0, 0, newShape);
+    }
+    // Kick will attempt to move the piece to a place where it can rotate.
+    // Following the guidelines established here: https://tetris.wiki/Super_Rotation_System
+    // this kick function should work for all pieces except I, so it should be overriden there
+    public void kick(int[][] newShape, boolean direction){
+        boolean successfullyRotated = true;
+        // 0->R or 2->R
+        if((rotation == 0 && direction) || (rotation == 2 && !direction)){
+            if(canMove(-1, 0, newShape)){
+                shape = newShape;
+                move(-1, 0);
+            } else if(canMove(-1, 1, newShape)){
+                shape = newShape;
+                move(-1, 1);
+            } else if(canMove(0, -2, newShape)){
+                shape = newShape;
+                move(0, -2);
+            } else if(canMove(-1, -2, newShape)){
+                shape = newShape;
+                move(-1, -2);
+            }
+        // R -> 0 or R -> 2
+        }else if(rotation == 1){
+            if(canMove(1, 0, newShape)){
+                shape = newShape;
+                move(1, 0);
+            } else if(canMove(1, -1, newShape)){
+                shape = newShape;
+                move(1, -1);
+            } else if(canMove(0, 2, newShape)){
+                shape = newShape;
+                move(0, 2);
+            } else if(canMove(1, 2, newShape)){
+                shape = newShape;
+                move(1, 2);
+            }
+        // 2 -> L or 0 -> L
+        }else if((rotation == 2 && direction) || (rotation == 0 && !direction)){
+            if(canMove(1, 0, newShape)){
+                shape = newShape;
+                move(1, 0);
+            } else if(canMove(1, 1, newShape)){
+                shape = newShape;
+                move(1, 1);
+            } else if(canMove(0, -2, newShape)){
+                shape = newShape;
+                move(0, -2);
+            } else if(canMove(1, -2, newShape)){
+                shape = newShape;
+                move(1, -2);
+            }
+        // L -> 2 or L -> 0
+        }else if(rotation == 3){
+            if(canMove(-1, 0, newShape)){
+                shape = newShape;
+                move(-1, 0);
+            } else if(canMove(-1, -1, newShape)){
+                shape = newShape;
+                move(-1, -1);
+            } else if(canMove(0, 2, newShape)){
+                shape = newShape;
+                move(0, 2);
+            } else if(canMove(-1, 2, newShape)){
+                shape = newShape;
+                move(-1, 2);
+            }
+            // failed to rotate, establish this
+        }else{
+            successfullyRotated = false;
+        }
+        // if successfully rotated, increment the rotation 
+        if(successfullyRotated){
+            rotation = rotation + (direction ? 1 : -1);
+            if(rotation > 3){
+                rotation = 0;
+            } else if(rotation < 0){
+                rotation = 3;
+            }
+        }
     }
 
     // Draws the current piece to the canvas. called inside DrawBoard
