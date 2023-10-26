@@ -7,24 +7,43 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class TetrisLogic {
-
+    // Holds the actual gameboard
     private int[][] board;
-    
-    private Scene scene;
+    // Holds the current controlled piece
     private Tetromino currentPiece;
-    private Timeline timeline;
 
+    // JavaFX things
+    private Scene scene;
+    private Timeline timeline;
     private GraphicsContext gc;
+
+    // Timer things, stores values that affect how often things are updated / changed
+    private final int gameUpdateSpeed = 120;
+
+    private int incrementorDrawFrames = 0; // for abiding by the framerate
+    private int drawFramesHz; // for how often to actually update the frame 
+    private int incrementorPieceGravityMovement = 0; // for determining which frame to apply gravity
+    private int pieceGravityMovement = 20; //stores how fast the piece should actually move
+    private int incrementorControlCooldown = 0; // for using delayed auto shift when moving tile left or right
+    // TODO: actually use all of these. 
+
+    
 
     // Constructor, gets the scene and the graphics context and starts the game
     public TetrisLogic(Scene scene, GraphicsContext gc){
+        // Set up the JavaFX stuff
         this.scene = scene;
         this.gc = gc;
-
+        // define the size of the board with the given height and width
         board = new int[TetrisFrame.WIDTH][TetrisFrame.HEIGHT];
 
+        // Implement Key presses
+        //TODO: maybe move away from this and find a way to tie it to the update clock.
         scene.setOnKeyPressed(e -> handleKeyPress(e.getCode()));
+        // Defines how many hz must pass before drawing the next frame.
+        drawFramesHz = gameUpdateSpeed / TetrisFrame.FRAMERATE;
 
+        // Initialize the new game
         initializeGame();
     }
 
@@ -57,13 +76,15 @@ public class TetrisLogic {
             default:
                 break;
         }
-        drawBoard();
+        //drawBoard();
     }
 
     // Initializes the game. Creates the timeline, starts it, and then spawns the first Tetromino
     private void initializeGame() {
-        // Starts the movement of time. every x duration of time, call update();, indefinitely
-        timeline = new Timeline(new KeyFrame(Duration.seconds(.3), e -> update()));
+        
+        // Starts the movement of time. keyframe duration of 120 hz should update every 8.33 ms
+        System.out.println((Math.round((1.00 / gameUpdateSpeed) * 100000)) / 100.00);
+        timeline = new Timeline(new KeyFrame(Duration.millis((Math.round((1.00 / gameUpdateSpeed) * 100000)) / 100.00), e -> update()));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
 
@@ -73,18 +94,33 @@ public class TetrisLogic {
 
     // Called every "tick". Handles piece gravity and adding to the board.
     private void update() {
-        if (currentPiece.canMove(0, 1)) {
-            currentPiece.move(0, 1);
-            // Piece successfully moved, reset the counter
-            currentPiece.gravitySuccess(true);
-        } else {
-            // If gravitySuccess returns true, force drop the piece
-            if(currentPiece.gravitySuccess(false)){
-                currentPiece.addToBoard(board);
-                spawnTetromino();
+        // Move the current piece if it is time to do so
+        if(incrementorPieceGravityMovement >= pieceGravityMovement){
+            if (currentPiece.canMove(0, 1)) {
+                currentPiece.move(0, 1);
+                // Piece successfully moved, reset the counter
+                currentPiece.gravitySuccess(true);
+            } else {
+                // If gravitySuccess returns true, force drop the piece
+                if(currentPiece.gravitySuccess(false)){
+                    currentPiece.addToBoard(board);
+                    spawnTetromino();
+                }
             }
+            incrementorPieceGravityMovement = 0;
+        }else{
+            incrementorPieceGravityMovement++;
         }
-        drawBoard();
+
+        //Draw the board at the given framerate
+        if(incrementorDrawFrames >= drawFramesHz){
+            drawBoard();
+            incrementorDrawFrames = 0;
+        }
+        else{
+            incrementorDrawFrames++;
+        }
+        
     }
 
     // Spawns a tetromino. Gets a random number 1-7, and calls the appropriate constructor for that tetromino

@@ -16,6 +16,8 @@ public class TetrisFrame {
     public static final int WIDTH = 10; // Width of the playing field
     public static final int HEIGHT = 20; // Height of the playing field
 
+    public static final int FRAMERATE = 60;
+
     // Instantiate the canvas and the gc of the canvas
     private Canvas canvas;
     private GraphicsContext gc;
