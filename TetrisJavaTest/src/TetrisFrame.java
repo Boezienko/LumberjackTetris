@@ -53,7 +53,7 @@ public class TetrisFrame {
         leftBox.setPrefWidth(200); // Minimum width of the area. will grow with objects if needed
 
         // Add an image to the box
-        Image logoImage = new Image("/Logo1.png");
+        Image logoImage = new Image("/Logo.jpg");
         ImageView logoImageView = new ImageView(logoImage);
         leftBox.getChildren().add(logoImageView);
 
