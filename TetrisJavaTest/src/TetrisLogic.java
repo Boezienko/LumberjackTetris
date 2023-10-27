@@ -23,7 +23,7 @@ public class TetrisLogic {
     private int incrementorDrawFrames = 0; // for abiding by the framerate
     private int drawFramesHz; // for how often to actually update the frame 
     private int incrementorPieceGravityMovement = 0; // for determining which frame to apply gravity
-    private int pieceGravityMovement = 20; //stores how fast the piece should actually move
+    private int pieceGravityMovement = 120; //stores how fast the piece should actually move
     private int incrementorControlCooldown = 0; // for using delayed auto shift when moving tile left or right
     // TODO: actually use all of these. 
 
@@ -99,6 +99,8 @@ public class TetrisLogic {
 
     // Called every "tick". Handles piece gravity and adding to the board.
     private void update() {
+        clearLines();
+
         // Move the current piece if it is time to do so
         if(incrementorPieceGravityMovement >= pieceGravityMovement){
             if (currentPiece.canMove(0, 1)) {
@@ -172,7 +174,6 @@ public class TetrisLogic {
     private void drawBoard() {
         // Clears the board
         gc.clearRect(0, 0, TetrisFrame.WIDTH * TetrisFrame.TILE_SIZE, TetrisFrame.HEIGHT * TetrisFrame.TILE_SIZE);
-        clearLines();
 
         // Draws the current controlled piece
         currentPiece.draw(gc);

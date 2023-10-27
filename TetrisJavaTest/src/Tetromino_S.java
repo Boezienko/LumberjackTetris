@@ -5,5 +5,4 @@ public class Tetromino_S extends Tetromino{
         super(Shapes.S, Color.GREEN, board);
         super.colorBoard = 4;
     }
-    
 }
