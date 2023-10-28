@@ -17,20 +17,19 @@ public class TetrisLogic {
     private Timeline timeline;
     private GraphicsContext gc;
 
-    // Timer things, stores values that affect how often things are updated / changed
+    // Timer things, stores values that affect how often things are updated /
+    // changed
     private final int gameUpdateSpeed = 120;
 
     private int incrementorDrawFrames = 0; // for abiding by the framerate
-    private int drawFramesHz; // for how often to actually update the frame 
+    private int drawFramesHz; // for how often to actually update the frame
     private int incrementorPieceGravityMovement = 0; // for determining which frame to apply gravity
-    private int pieceGravityMovement = 120; //stores how fast the piece should actually move
+    private int pieceGravityMovement = 120; // stores how fast the piece should actually move
     private int incrementorControlCooldown = 0; // for using delayed auto shift when moving tile left or right
-    // TODO: actually use all of these. 
-
-    
+    // TODO: actually use all of these.
 
     // Constructor, gets the scene and the graphics context and starts the game
-    public TetrisLogic(Scene scene, GraphicsContext gc){
+    public TetrisLogic(Scene scene, GraphicsContext gc) {
         // Set up the JavaFX stuff
         this.scene = scene;
         this.gc = gc;
@@ -38,7 +37,7 @@ public class TetrisLogic {
         board = new int[TetrisFrame.WIDTH][TetrisFrame.HEIGHT];
 
         // Implement Key presses
-        //TODO: maybe move away from this and find a way to tie it to the update clock.
+        // TODO: maybe move away from this and find a way to tie it to the update clock.
         scene.setOnKeyPressed(e -> handleKeyPress(e.getCode()));
         // Defines how many hz must pass before drawing the next frame.
         drawFramesHz = gameUpdateSpeed / TetrisFrame.FRAMERATE;
@@ -47,7 +46,8 @@ public class TetrisLogic {
         initializeGame();
     }
 
-    // When a key is press, move or rotate the current piece. then draw the board again.
+    // When a key is press, move or rotate the current piece. then draw the board
+    // again.
     private void handleKeyPress(KeyCode keyCode) {
         switch (keyCode) {
             case LEFT:
@@ -57,15 +57,15 @@ public class TetrisLogic {
                 currentPiece.move(1, 0);
                 break;
             case DOWN:
-            // If down is pressed, and it can move down, it moves down
-            // If it can't, add to gravity success to speed up adding it to the board
-                if(!currentPiece.move(0, 1)){
-                    if(currentPiece.gravitySuccess(false)){
+                // If down is pressed, and it can move down, it moves down
+                // If it can't, add to gravity success to speed up adding it to the board
+                if (!currentPiece.move(0, 1)) {
+                    if (currentPiece.gravitySuccess(false)) {
                         currentPiece.addToBoard(board);
                         spawnTetromino();
                     }
                 }
-                
+
                 break;
             case UP:
                 currentPiece.rotate(true);
@@ -81,15 +81,18 @@ public class TetrisLogic {
             default:
                 break;
         }
-        //drawBoard();
+        // drawBoard();
     }
 
-    // Initializes the game. Creates the timeline, starts it, and then spawns the first Tetromino
+    // Initializes the game. Creates the timeline, starts it, and then spawns the
+    // first Tetromino
     private void initializeGame() {
 
-        // Starts the movement of time. keyframe duration of 120 hz should update every 8.33 ms
+        // Starts the movement of time. keyframe duration of 120 hz should update every
+        // 8.33 ms
         System.out.println((Math.round((1.00 / gameUpdateSpeed) * 100000)) / 100.00);
-        timeline = new Timeline(new KeyFrame(Duration.millis((Math.round((1.00 / gameUpdateSpeed) * 100000)) / 100.00), e -> update()));
+        timeline = new Timeline(
+                new KeyFrame(Duration.millis((Math.round((1.00 / gameUpdateSpeed) * 100000)) / 100.00), e -> update()));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
 
@@ -102,70 +105,70 @@ public class TetrisLogic {
         clearLines();
 
         // Move the current piece if it is time to do so
-        if(incrementorPieceGravityMovement >= pieceGravityMovement){
+        if (incrementorPieceGravityMovement >= pieceGravityMovement) {
             if (currentPiece.canMove(0, 1)) {
                 currentPiece.move(0, 1);
                 // Piece successfully moved, reset the counter
                 currentPiece.gravitySuccess(true);
             } else {
                 // If gravitySuccess returns true, force drop the piece
-                if(currentPiece.gravitySuccess(false)){
+                if (currentPiece.gravitySuccess(false)) {
                     currentPiece.addToBoard(board);
                     spawnTetromino();
                 }
             }
             incrementorPieceGravityMovement = 0;
-        }else{
+        } else {
             incrementorPieceGravityMovement++;
         }
 
-        //Draw the board at the given framerate
-        if(incrementorDrawFrames >= drawFramesHz){
+        // Draw the board at the given framerate
+        if (incrementorDrawFrames >= drawFramesHz) {
             drawBoard();
             incrementorDrawFrames = 0;
-        }
-        else{
+        } else {
             incrementorDrawFrames++;
         }
-        
+
     }
 
-    // Spawns a tetromino. Gets a random number 1-7, and calls the appropriate constructor for that tetromino
+    // Spawns a tetromino. Gets a random number 1-7, and calls the appropriate
+    // constructor for that tetromino
     private void spawnTetromino() {
         int rand = (int) (Math.random() * 7) + 1;
         System.out.println("Random piece is: " + rand);
         switch (rand) {
             case 1:
                 // Create I Piece
-                currentPiece = new Tetromino_I(board);
+                currentPiece = new Tetromino_IFactory(board);
                 break;
             case 2:
                 // Create O Piece
-                currentPiece = new Tetromino_O(board);
+                currentPiece = new Tetromino_OFactory(board);
                 break;
             case 3:
                 // Create T Piece
-                currentPiece = new Tetromino_T(board);
+                currentPiece = new Tetromino_TFactory(board);
                 break;
             case 4:
                 // Create S Piece
-                currentPiece = new Tetromino_S(board);
+                currentPiece = new Tetromino_SFactory(board);
                 break;
             case 5:
                 // Create Z Piece
-                currentPiece = new Tetromino_Z(board);
+                currentPiece = new Tetromino_ZFactory(board);
                 break;
             case 6:
                 // Create J Piece
-                currentPiece = new Tetromino_J(board);
+                currentPiece = new Tetromino_JFactory(board);
                 break;
             case 7:
                 // Create L Piece
-                currentPiece = new Tetromino_L(board);
+                currentPiece = new Tetromino_LFactory(board);
                 break;
             default:
-                // Should absolutely never happen. but if it does, give em an I. 
-                currentPiece = new Tetromino_I(board);
+                // Should absolutely never happen. but if it does, give em an I.
+                currentPiece = new Tetromino_IFactory(board);
                 break;
         }
     }
@@ -182,27 +185,27 @@ public class TetrisLogic {
         // Iterates over the board array and draws each block
         for (int x = 0; x < TetrisFrame.WIDTH; x++) {
             for (int y = 0; y < TetrisFrame.HEIGHT; y++) {
-                //System.out.print(board[x][y] + " ");
+                // System.out.print(board[x][y] + " ");
                 if (board[x][y] != 0) {
                     // Determine the color of the block
                     Color curColor;
-                    switch (board[x][y]){
+                    switch (board[x][y]) {
                         case 1:
                             curColor = Color.CYAN.darker();
                             break;
-                        case 2: 
+                        case 2:
                             curColor = Color.YELLOW.darker();
                             break;
                         case 3:
                             curColor = Color.PURPLE;
                             break;
-                        case 4: 
+                        case 4:
                             curColor = Color.GREEN;
                             break;
                         case 5:
                             curColor = Color.RED;
                             break;
-                        case 6: 
+                        case 6:
                             curColor = Color.BLUE;
                             break;
                         case 7:
@@ -213,14 +216,16 @@ public class TetrisLogic {
                             break;
                     }
                     gc.setFill(curColor); // Set the color of the Tetromino
-                    gc.fillRect(x * TetrisFrame.TILE_SIZE + 2, y * TetrisFrame.TILE_SIZE + 2, TetrisFrame.TILE_SIZE - 2, TetrisFrame.TILE_SIZE -2);
+                    gc.fillRect(x * TetrisFrame.TILE_SIZE + 2, y * TetrisFrame.TILE_SIZE + 2, TetrisFrame.TILE_SIZE - 2,
+                            TetrisFrame.TILE_SIZE - 2);
                 }
             }
-            //System.out.println();
+            // System.out.println();
         }
     }
 
-    // Checks if any lines are filled. if so, remove them and push the rows above it down
+    // Checks if any lines are filled. if so, remove them and push the rows above it
+    // down
     private void clearLines() {
         // Iterate over the board
         for (int y = TetrisFrame.HEIGHT - 1; y >= 0; y--) {
@@ -248,5 +253,5 @@ public class TetrisLogic {
                 y++;
             }
         }
-    } 
+    }
 }
