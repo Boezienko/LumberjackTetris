@@ -11,13 +11,10 @@ public class TetrisLogic {
     private int[][] board;
     // Holds the current controlled piece
     private Tetromino currentPiece;
-    private Tetromino_IFactory tetrominoIFactory = new Tetromino_IFactory();
-    private Tetromino_SFactory tetrominoSFactory = new Tetromino_SFactory();
-    private Tetromino_LFactory tetrominoLFactory = new Tetromino_LFactory();
-    private Tetromino_TFactory tetrominoTFactory = new Tetromino_TFactory();
-    private Tetromino_OFactory tetrominoOFactory = new Tetromino_OFactory();
-    private Tetromino_JFactory tetrominoJFactory = new Tetromino_JFactory();
-    private Tetromino_ZFactory tetrominoZFactory = new Tetromino_ZFactory();
+    private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
+            tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
+            tetrominoTFactory = new Tetromino_TFactory(), tetrominoOFactory = new Tetromino_OFactory(),
+            tetrominoJFactory = new Tetromino_JFactory(), tetrominoZFactory = new Tetromino_ZFactory();
 
     // JavaFX things
     private Scene scene;
