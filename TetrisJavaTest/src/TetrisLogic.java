@@ -8,9 +8,9 @@ import javafx.util.Duration;
 
 public class TetrisLogic {
     // Holds the actual gameboard
-    private int[][] board;
+    private static int[][] board;
     // Holds the current controlled piece
-    private Tetromino currentPiece;
+    private static Tetromino currentPiece;
 
     // JavaFX things
     private Scene scene;
@@ -134,41 +134,41 @@ public class TetrisLogic {
 
     // Spawns a tetromino. Gets a random number 1-7, and calls the appropriate
     // constructor for that tetromino
-    private void spawnTetromino() {
+    private static void spawnTetromino() {
         int rand = (int) (Math.random() * 7) + 1;
         System.out.println("Random piece is: " + rand);
         switch (rand) {
             case 1:
                 // Create I Piece
-                currentPiece = new Tetromino_IFactory(board);
+                currentPiece = Tetromino_IFactory.createTetromino(board);
                 break;
             case 2:
                 // Create O Piece
-                currentPiece = new Tetromino_OFactory(board);
+                currentPiece = Tetromino_OFactory.createTetromino(board);
                 break;
             case 3:
                 // Create T Piece
-                currentPiece = new Tetromino_TFactory(board);
+                currentPiece = Tetromino_TFactory.createTetromino(board);
                 break;
             case 4:
                 // Create S Piece
-                currentPiece = new Tetromino_SFactory(board);
+                currentPiece = Tetromino_SFactory.createTetromino(board);
                 break;
             case 5:
                 // Create Z Piece
-                currentPiece = new Tetromino_ZFactory(board);
+                currentPiece = Tetromino_ZFactory.createTetromino(board);
                 break;
             case 6:
                 // Create J Piece
-                currentPiece = new Tetromino_JFactory(board);
+                currentPiece = Tetromino_JFactory.createTetromino(board);
                 break;
             case 7:
                 // Create L Piece
-                currentPiece = new Tetromino_LFactory(board);
+                currentPiece = Tetromino_LFactory.createTetromino(board);
                 break;
             default:
                 // Should absolutely never happen. but if it does, give em an I.
-                currentPiece = new Tetromino_IFactory(board);
+                currentPiece = Tetromino_IFactory.createTetromino(board);
                 break;
         }
     }

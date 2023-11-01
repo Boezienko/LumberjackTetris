@@ -1,7 +1,4 @@
-public class Tetromino_IFactory extends Tetromino_I implements Tetromino_Factory {
-    public Tetromino_IFactory(int[][] board) {
-        super(board);
-    }
+public class Tetromino_IFactory implements Tetromino_Factory {
 
     @Override
     public Tetromino_I createTetromino(int[][] board) {
