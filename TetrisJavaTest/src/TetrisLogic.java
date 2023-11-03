@@ -1,3 +1,8 @@
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
@@ -15,6 +20,9 @@ public class TetrisLogic {
             tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
             tetrominoTFactory = new Tetromino_TFactory(), tetrominoOFactory = new Tetromino_OFactory(),
             tetrominoJFactory = new Tetromino_JFactory(), tetrominoZFactory = new Tetromino_ZFactory();
+
+    // queue that holds the current pieces for the 7 bag
+    private Queue<Integer> tetrominoQueue = new LinkedList<>();
 
     // JavaFX things
     private Scene scene;
@@ -45,6 +53,8 @@ public class TetrisLogic {
         scene.setOnKeyPressed(e -> handleKeyPress(e.getCode()));
         // Defines how many hz must pass before drawing the next frame.
         drawFramesHz = gameUpdateSpeed / TetrisFrame.FRAMERATE;
+
+        tetrominoQueue = generateTetrominoQueue();
 
         // Initialize the new game
         initializeGame();
@@ -136,12 +146,14 @@ public class TetrisLogic {
 
     }
 
-    // Spawns a tetromino. Gets a random number 1-7, and calls the appropriate
+    // Spawns a tetromino. Pulls from the queue
     // constructor for that tetromino
     private void spawnTetromino() {
-        int rand = (int) (Math.random() * 7) + 1;
-        System.out.println("Random piece is: " + rand);
-        switch (rand) {
+        // pulls a tetromino from the queue
+        int spawnPiece = tetrominoQueue.poll();
+        System.out.println("Random piece is: " + spawnPiece);
+        // create the correspondingf tetromino from the queue value
+        switch (spawnPiece) {
             case 1:
                 // Create I Piece
                 currentPiece = tetrominoIFactory.createTetromino(board);
@@ -173,8 +185,28 @@ public class TetrisLogic {
             default:
                 // Should absolutely never happen. but if it does, give em an I.
                 currentPiece = tetrominoIFactory.createTetromino(board);
-                break;
+                break; 
         }
+        // If the queue is empty, fill it
+        if(tetrominoQueue.isEmpty()){
+            tetrominoQueue = generateTetrominoQueue();
+        }
+    }
+
+    public static Queue<Integer> generateTetrominoQueue() {
+        // Create a list with numbers 1 to 7
+        List<Integer> numbers = new LinkedList<>();
+        for (int i = 1; i <= 7; i++) {
+            numbers.add(i);
+        }
+        // Shuffle the list to randomize the order of the Tetrominoes
+        Collections.shuffle(numbers);
+
+        // Create the queue and add the shuffled number Tetromino reps
+        Queue<Integer> queue = new LinkedList<>();
+        queue.addAll(numbers);
+        // Return the Queue
+        return queue;
     }
 
     // Updates the board. Clears the canvas and draws the next frame of the game.
