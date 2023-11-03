@@ -29,6 +29,8 @@ public class TetrisLogic {
     private Timeline timeline;
     private GraphicsContext gc;
 
+    private TetrisFrame frame;
+
     // Timer things, stores values that affect how often things are updated /
     // changed
     private final int gameUpdateSpeed = 120;
@@ -41,10 +43,11 @@ public class TetrisLogic {
     // TODO: actually use all of these.
 
     // Constructor, gets the scene and the graphics context and starts the game
-    public TetrisLogic(Scene scene, GraphicsContext gc) {
+    public TetrisLogic(Scene scene, GraphicsContext gc, TetrisFrame frame) {
         // Set up the JavaFX stuff
         this.scene = scene;
         this.gc = gc;
+        this.frame = frame;
         // define the size of the board with the given height and width
         board = new int[TetrisFrame.WIDTH][TetrisFrame.HEIGHT];
 
@@ -95,7 +98,6 @@ public class TetrisLogic {
             default:
                 break;
         }
-        // drawBoard();
     }
 
     // Initializes the game. Creates the timeline, starts it, and then spawns the
@@ -185,12 +187,13 @@ public class TetrisLogic {
             default:
                 // Should absolutely never happen. but if it does, give em an I.
                 currentPiece = tetrominoIFactory.createTetromino(board);
-                break; 
+                break;
         }
         // If the queue is empty, fill it
-        if(tetrominoQueue.isEmpty()){
+        if (tetrominoQueue.isEmpty()) {
             tetrominoQueue = generateTetrominoQueue();
         }
+        frame.drawNextTetromino(this);
     }
 
     public static Queue<Integer> generateTetrominoQueue() {
@@ -207,6 +210,11 @@ public class TetrisLogic {
         queue.addAll(numbers);
         // Return the Queue
         return queue;
+    }
+
+    // Returns tetrominoQueue to allow next piece to be drawn
+    public Queue<Integer> getTetrominoQueue() {
+        return tetrominoQueue;
     }
 
     // Updates the board. Clears the canvas and draws the next frame of the game.
