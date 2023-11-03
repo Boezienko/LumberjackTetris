@@ -21,19 +21,17 @@ public class TetrisFrame {
     // Instantiate the canvas and the gc of the canvas
     private Canvas canvas;
     private GraphicsContext gc;
-    
+
     private Stage stage;
     private Scene scene;
 
-    //Instantiate the logic of the game.
+    // Instantiate the logic of the game.
     private TetrisLogic logic;
 
     // Constructor. creates all the display elements other things will use
     public TetrisFrame(Stage stage) {
         // pull in the stage argument
         this.stage = stage;
-
-       
 
         // Set the title and Icon
         stage.setTitle("OOP Tetris");
@@ -68,7 +66,8 @@ public class TetrisFrame {
             public void handle(ActionEvent event) {
                 // call for the game logic to start
                 startGame();
-                // Disable the button (if enabled, keypress focus will leave the canvas when left is pressed)
+                // Disable the button (if enabled, keypress focus will leave the canvas when
+                // left is pressed)
                 startButton.setDisable(true);
                 // Set the focus to the canvas
                 canvas.requestFocus();
@@ -78,18 +77,16 @@ public class TetrisFrame {
         // Add the button to the left VBox
         leftBox.getChildren().add(startButton);
 
-        //add the box to the pane
+        // add the box to the pane
         borderPane.setLeft(leftBox);
 
         // Create the scene with the borderpane
         scene = new Scene(borderPane);
-        
+
         scene.getRoot().setFocusTraversable(false);
 
         // Add the scene to the stage
         stage.setScene(scene);
-
-        
 
         // Show the stage
         stage.show();
@@ -101,6 +98,5 @@ public class TetrisFrame {
         // Start the game logic
         logic = new TetrisLogic(scene, gc);
     }
-
 
 }
