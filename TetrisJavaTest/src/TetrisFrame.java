@@ -51,7 +51,7 @@ public class TetrisFrame {
         canvas = new Canvas(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE);
         gc = canvas.getGraphicsContext2D();
 
-        rightCanvas = new Canvas(TILE_SIZE * WIDTH, TILE_SIZE * WIDTH);
+        rightCanvas = new Canvas(TILE_SIZE * WIDTH / 2, TILE_SIZE * WIDTH / 2);
 
         // Create a border pane to hold the canvas and additional elements
         BorderPane borderPane = new BorderPane();
@@ -162,8 +162,10 @@ public class TetrisFrame {
                 nextPiece = tetrominoIFactory.createTetromino(board);
                 break;
         }
+        nextPiece.setX(1);
+        nextPiece.setY(1);
         // Clear previous "next-piece"
-        rightGC.clearRect(0, 0, TetrisFrame.TILE_SIZE * WIDTH, TetrisFrame.TILE_SIZE * WIDTH);
+        rightGC.clearRect(0, 0, TetrisFrame.TILE_SIZE * WIDTH / 2, TetrisFrame.TILE_SIZE * WIDTH / 2);
         // Draws next piece to right VBox
         nextPiece.draw(rightGC);
     }

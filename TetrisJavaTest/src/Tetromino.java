@@ -31,6 +31,14 @@ public abstract class Tetromino {
         rotation = 0;
     }
 
+    public void setX(int x){
+        this.x = x;
+    }
+
+    public void setY(int y){
+        this.y = y;
+    }
+
     // Returns true if the piece can move to the given delta of its position. False
     // if Imposible
     // Used in determining if the player can move, or if gravity can push the object
