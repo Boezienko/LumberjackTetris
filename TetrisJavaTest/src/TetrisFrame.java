@@ -20,10 +20,16 @@ public class TetrisFrame {
     public static final int FRAMERATE = 60;
 
     // Instantiate the canvas and the gc of the canvas
+    // game canvas
     private Canvas canvas;
     private GraphicsContext gc;
-    private GraphicsContext rightGC;
+    // next piece canvas
     private Canvas rightCanvas;
+    private GraphicsContext rightGC;
+    // held piece canvas
+    private Canvas heldCanvas;
+    private GraphicsContext heldGC;
+    
 
     private Stage stage;
     private Scene scene;
@@ -37,6 +43,7 @@ public class TetrisFrame {
     private TetrisLogic logic;
 
     private Tetromino nextPiece;
+    private Tetromino heldPiece;
 
     // Constructor. creates all the display elements other things will use
     public TetrisFrame(Stage stage) {
@@ -48,10 +55,14 @@ public class TetrisFrame {
         stage.getIcons().add(new Image("/icon.png"));
 
         // Set the canvas to the given size. create gc reference for convenience
-        canvas = new Canvas(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE);
+        canvas = new Canvas(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE); // canvas for the tetris game
         gc = canvas.getGraphicsContext2D();
 
-        rightCanvas = new Canvas(TILE_SIZE * WIDTH / 2, TILE_SIZE * WIDTH / 2);
+        rightCanvas = new Canvas(TILE_SIZE * WIDTH / 2, TILE_SIZE * WIDTH / 2); //canvas for the next piece
+
+        heldCanvas = new Canvas(TILE_SIZE * WIDTH / 2, TILE_SIZE * WIDTH / 2); //canvas for the held piece
+
+        
 
         // Create a border pane to hold the canvas and additional elements
         BorderPane borderPane = new BorderPane();
@@ -62,11 +73,11 @@ public class TetrisFrame {
         leftBox.setStyle("-fx-background-color: #E0E0E0;"); // Background color
         leftBox.setPrefWidth(200); // Minimum width of the area. will grow with objects if needed
 
-        // Create a VBox, displays next piece and score
+        // Create a VBox, displays next piece and score, and held piece
         VBox rightBox = new VBox(8);
         rightBox.setStyle("-fx-background-color: #E0E0E0;"); // Background color
         rightBox.setPrefWidth(200); // Minimum width of the area. will grow with objects if needed
-        rightBox.getChildren().addAll(new Label("Next piece:"), rightCanvas); // add canvas to draw next piece on and
+        rightBox.getChildren().addAll(new Label("Next piece:"), rightCanvas, new Label("Held piece:"), heldCanvas); // add canvas to draw next piece on and
                                                                               // text
                                                                               // box to label
 
@@ -168,5 +179,59 @@ public class TetrisFrame {
         rightGC.clearRect(0, 0, TetrisFrame.TILE_SIZE * WIDTH / 2, TetrisFrame.TILE_SIZE * WIDTH / 2);
         // Draws next piece to right VBox
         nextPiece.draw(rightGC);
+    }
+
+    // checks the held tetromino and spawns it to draw it to held-piece section on
+    // right VBox
+    public void drawHeldTetromino(TetrisLogic logic) {
+        int[][] board = {};
+        heldGC = heldCanvas.getGraphicsContext2D();
+        // peeks at a tetromino from the queue
+        int spawnPiece = logic.getHeldPiece();
+        // create the corresponding tetromino from the queue value
+        switch (spawnPiece) {
+            case 1:
+                // Create I Piece
+                heldPiece = tetrominoIFactory.createTetromino(board);
+                break;
+            case 2:
+                // Create O Piece
+                heldPiece = tetrominoOFactory.createTetromino(board);
+                break;
+            case 3:
+                // Create T Piece
+                heldPiece = tetrominoTFactory.createTetromino(board);
+                break;
+            case 4:
+                // Create S Piece
+                heldPiece = tetrominoSFactory.createTetromino(board);
+                break;
+            case 5:
+                // Create Z Piece
+                heldPiece = tetrominoZFactory.createTetromino(board);
+                break;
+            case 6:
+                // Create J Piece
+                heldPiece = tetrominoJFactory.createTetromino(board);
+                break;
+            case 7:
+                // Create L Piece
+                heldPiece = tetrominoLFactory.createTetromino(board);
+                break;
+            default:
+                // Should absolutely never happen. but if it does, give em a null.
+                heldPiece = null;
+                break;
+        }
+
+        if(heldPiece != null){
+            heldPiece.setX(1);
+            heldPiece.setY(1);
+            // Clear previous "held-piece"
+            heldGC.clearRect(0, 0, TetrisFrame.TILE_SIZE * WIDTH / 2, TetrisFrame.TILE_SIZE * WIDTH / 2);
+            // Draws next piece to held VBox
+            heldPiece.draw(heldGC);
+        }
+        
     }
 }

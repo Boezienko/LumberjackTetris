@@ -16,6 +16,10 @@ public class TetrisLogic {
     private int[][] board;
     // Holds the current controlled piece
     private Tetromino currentPiece;
+    // Holds the held piece;
+    private int heldPiece = 0;
+    private int heldPieceCalled = 0;
+
     private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
             tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
             tetrominoTFactory = new Tetromino_TFactory(), tetrominoOFactory = new Tetromino_OFactory(),
@@ -95,6 +99,8 @@ public class TetrisLogic {
                 currentPiece.addToBoard(board);
                 spawnTetromino();
                 break;
+            case H:
+                holdTetromino();
             default:
                 break;
         }
@@ -148,6 +154,65 @@ public class TetrisLogic {
 
     }
 
+    // Stores the current piece in held tetromino, and vise versa
+    private void holdTetromino(){
+        if(heldPieceCalled == 0){
+            // if held piece is empty, hold it and spawn a new one
+        if(heldPiece == 0){
+            heldPiece = currentPiece.colorBoard;
+            heldPieceCalled++;
+            spawnTetromino();
+        }
+        else{
+            int temp;
+            temp = currentPiece.colorBoard;
+            // create the correspondingf tetromino from the queue value
+            switch (heldPiece) {
+                case 1:
+                    // Create I Piece
+                    currentPiece = tetrominoIFactory.createTetromino(board);
+                    break;
+                case 2:
+                    // Create O Piece
+                    currentPiece = tetrominoOFactory.createTetromino(board);
+                    break;
+                case 3:
+                    // Create T Piece
+                    currentPiece = tetrominoTFactory.createTetromino(board);
+                    break;
+                case 4:
+                    // Create S Piece
+                    currentPiece = tetrominoSFactory.createTetromino(board);
+                    break;
+                case 5:
+                    // Create Z Piece
+                    currentPiece = tetrominoZFactory.createTetromino(board);
+                    break;
+                case 6:
+                    // Create J Piece
+                    currentPiece = tetrominoJFactory.createTetromino(board);
+                    break;
+                case 7:
+                    // Create L Piece
+                    currentPiece = tetrominoLFactory.createTetromino(board);
+                    break;
+                default:
+                    // Should absolutely never happen. but if it does, give em an I.
+                    currentPiece = tetrominoIFactory.createTetromino(board);
+                    break;
+            }
+            heldPiece = temp;
+
+        }
+        // Set to true
+        heldPieceCalled++;
+        }
+    }
+
+    public int getHeldPiece(){
+        return heldPiece;
+    }
+
     // Spawns a tetromino. Pulls from the queue
     // constructor for that tetromino
     private void spawnTetromino() {
@@ -194,8 +259,13 @@ public class TetrisLogic {
             tetrominoQueue = generateTetrominoQueue();
         }
         frame.drawNextTetromino(this);
+        // New piece spawned, it is now ok for the player to hold again
+        if(heldPieceCalled > 0){
+            heldPieceCalled--;
+        }
     }
 
+    // When the queue is empty, call this to generate a new 7 bag of pieces
     public static Queue<Integer> generateTetrominoQueue() {
         // Create a list with numbers 1 to 7
         List<Integer> numbers = new LinkedList<>();
@@ -225,6 +295,9 @@ public class TetrisLogic {
         // Draws the current controlled piece
         currentPiece.draw(gc);
         currentPiece.drawShadow(gc);
+
+        // Draws the held piece in the right vbox
+        frame.drawHeldTetromino(this);
 
         // Iterates over the board array and draws each block
         for (int x = 0; x < TetrisFrame.WIDTH; x++) {
