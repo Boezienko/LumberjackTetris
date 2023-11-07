@@ -6,5 +6,6 @@ TODO:
 - add game over
 - add restart
 - add pause
-- add next piece preview
-- add hold piece
+- ~~add next piece preview~~
+- ~~add hold piece~~
+- add sending lines to opponent
