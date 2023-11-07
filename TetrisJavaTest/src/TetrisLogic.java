@@ -52,15 +52,13 @@ public class TetrisLogic {
     private int incrementorControlCooldown = 0; // for using delayed auto shift when moving tile left or right
 
     // Constructor, gets the scene and the graphics context and starts the game
-    public TetrisLogic(Scene scene, GraphicsContext gc, TetrisFrame frame, Controls controls) { //p2 constructor
+    public TetrisLogic(Scene scene, GraphicsContext gc, TetrisFrame frame, int player) {
         // Set up the JavaFX stuff
         this.scene = scene;
         this.gc = gc;
         this.frame = frame;
-        this.controls = controls;
-
-        // sets player to 2 (gets corrected to 1 later if player1 constructor is called)
-        player = 2;
+        this.controls = new Controls(scene);
+        this.player = player;
 
         // define the size of the board with the given height and width
         board = new int[TetrisFrame.WIDTH][TetrisFrame.HEIGHT];
@@ -72,10 +70,6 @@ public class TetrisLogic {
 
         // Initialize the new game
         initializeGame();
-    }
-    public TetrisLogic(Scene scene, GraphicsContext gc, TetrisFrame frame){ // p1 constructor
-        this(scene, gc, frame, new Controls(scene));
-        player = 1;
     }
 
     // TODO please for the love of god we gotta do something about this. this solution just feels wrong but it works oh so right

@@ -169,14 +169,14 @@ public class TetrisFrame {
     private void startGame() {
         // Start the game logic
         if(player == 1 && otherTetrisFrame != null){
-            logic = new TetrisLogic(scene, gc, this);
+            logic = new TetrisLogic(scene, gc, this, player);
             otherTetrisFrame.startGame();
         }
         else if (player == 2){
-            logic = new TetrisLogic(scene, gc, this, otherTetrisFrame.logic.controls);
+            logic = new TetrisLogic(scene, gc, this, player);
         }
         else{
-            logic = new TetrisLogic(scene, gc, this);
+            logic = new TetrisLogic(scene, gc, this, player);
         }
         
     }
