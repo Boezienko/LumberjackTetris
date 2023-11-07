@@ -35,6 +35,9 @@ public class TetrisLogic {
 
     private TetrisFrame frame;
 
+    // Handles the controls for the player
+    Controls controls;
+
     // Timer things, stores values that affect how often things are updated /
     // changed
     private final int gameUpdateSpeed = 120;
@@ -44,7 +47,6 @@ public class TetrisLogic {
     private int incrementorPieceGravityMovement = 0; // for determining which frame to apply gravity
     private int pieceGravityMovement = 120; // stores how fast the piece should actually move
     private int incrementorControlCooldown = 0; // for using delayed auto shift when moving tile left or right
-    // TODO: actually use all of these.
 
     // Constructor, gets the scene and the graphics context and starts the game
     public TetrisLogic(Scene scene, GraphicsContext gc, TetrisFrame frame) {
@@ -52,12 +54,13 @@ public class TetrisLogic {
         this.scene = scene;
         this.gc = gc;
         this.frame = frame;
+
+        // implements controls for keyboard and controller
+        controls = new Controls(scene);
+
         // define the size of the board with the given height and width
         board = new int[TetrisFrame.WIDTH][TetrisFrame.HEIGHT];
-
-        // Implement Key presses
-        // TODO: maybe move away from this and find a way to tie it to the update clock.
-        scene.setOnKeyPressed(e -> handleKeyPress(e.getCode()));
+        
         // Defines how many hz must pass before drawing the next frame.
         drawFramesHz = gameUpdateSpeed / TetrisFrame.FRAMERATE;
 
@@ -67,44 +70,90 @@ public class TetrisLogic {
         initializeGame();
     }
 
-    // When a key is press, move or rotate the current piece. then draw the board
-    // again.
-    private void handleKeyPress(KeyCode keyCode) {
-        switch (keyCode) {
-            case LEFT:
+    // TODO please for the love of god we gotta do something about this. this solution just feels wrong but it works oh so right
+    private void handleControls(){
+    // left, move piece left, 
+        if(controls.getButtonStatus()[controls.LEFT]) {
+            // DAS (delayed auto shift)
+            if(controls.getButtonHeldLength(controls.LEFT) == 0 || (controls.getButtonHeldLength(controls.LEFT) >= (gameUpdateSpeed / 4) && controls.getButtonHeldLength(controls.LEFT) % 4 == 0)){
                 currentPiece.move(-1, 0);
-                break;
-            case RIGHT:
+            }
+            controls.setButtonHeldLength(controls.LEFT, controls.getButtonHeldLength(controls.LEFT) + 1);
+        }
+        else{
+            controls.setButtonHeldLength(controls.LEFT, 0);
+        }
+    // right, moves piece right
+        if(controls.getButtonStatus()[controls.RIGHT]) {
+            // DAS (delayed auto shift)
+            if(controls.getButtonHeldLength(controls.RIGHT) == 0 || (controls.getButtonHeldLength(controls.RIGHT) >= (gameUpdateSpeed / 4) && controls.getButtonHeldLength(controls.RIGHT) % 4 == 0)){
                 currentPiece.move(1, 0);
-                break;
-            case DOWN:
-                // If down is pressed, and it can move down, it moves down
-                // If it can't, add to gravity success to speed up adding it to the board
+            }
+            controls.setButtonHeldLength(controls.RIGHT, controls.getButtonHeldLength(controls.RIGHT) + 1);
+        }
+        else{
+            controls.setButtonHeldLength(controls.RIGHT, 0);
+        }
+    // down, moves piece down (soft drop)
+        if(controls.getButtonStatus()[controls.DOWN]) {
+            // If down is pressed, and it can move down, it moves down
+            // If it can't, add to gravity success to speed up adding it to the board
+            if(controls.getButtonHeldLength(controls.DOWN) == 0 || (controls.getButtonHeldLength(controls.DOWN) >= (gameUpdateSpeed / 4) && controls.getButtonHeldLength(controls.DOWN) % 4 == 0)){
                 if (!currentPiece.move(0, 1)) {
                     if (currentPiece.gravitySuccess(false)) {
                         currentPiece.addToBoard(board);
                         spawnTetromino();
                     }
                 }
-
-                break;
-            case UP:
+            }
+            controls.setButtonHeldLength(controls.DOWN, controls.getButtonHeldLength(controls.DOWN) + 1);  
+        }
+        else{
+            controls.setButtonHeldLength(controls.DOWN, 0);
+        }
+    // B, rotates the piece clockwise
+        if(controls.getButtonStatus()[controls.B]) {
+            if(controls.getButtonHeldLength(controls.B) == 0 || (controls.getButtonHeldLength(controls.B) >= (gameUpdateSpeed / 2) && controls.getButtonHeldLength(controls.B) % 12 == 0)){
                 currentPiece.rotate(true);
-                break;
-            case Z:
+            }
+            controls.setButtonHeldLength(controls.B, controls.getButtonHeldLength(controls.B) + 1); 
+        }
+        else{
+            controls.setButtonHeldLength(controls.B, 0);
+        }
+    // A, rotates the piece counter clockwise
+        if(controls.getButtonStatus()[controls.A]) {
+            if(controls.getButtonHeldLength(controls.A) == 0 || (controls.getButtonHeldLength(controls.A) >= (gameUpdateSpeed / 2) && controls.getButtonHeldLength(controls.A) % 12 == 0)){
                 currentPiece.rotate(false);
-                break;
-            case SPACE:
+            }
+            controls.setButtonHeldLength(controls.A, controls.getButtonHeldLength(controls.A) + 1); 
+        }
+        else{
+            controls.setButtonHeldLength(controls.A, 0);
+        }
+    // UP, hard drops the piece
+        if(controls.getButtonStatus()[controls.UP]) {
+            if(controls.getButtonHeldLength(controls.UP) == 0){
                 currentPiece.hardDrop();
                 currentPiece.addToBoard(board);
                 spawnTetromino();
-                break;
-            case H:
-                holdTetromino();
-            default:
-                break;
+            }
+            controls.setButtonHeldLength(controls.UP, controls.getButtonHeldLength(controls.UP) + 1); 
         }
-    }
+        else{
+            controls.setButtonHeldLength(controls.UP, 0);
+        }
+    // SHOULDER, holds the current given piece
+        if(controls.getButtonStatus()[controls.SHOULDER]) {
+            if(controls.getButtonHeldLength(controls.SHOULDER) == 0){
+                holdTetromino();
+            }
+            controls.setButtonHeldLength(controls.SHOULDER, controls.getButtonHeldLength(controls.SHOULDER) + 1); 
+        }
+        else{
+            controls.setButtonHeldLength(controls.SHOULDER, 0);
+        }
+    }// end controls
 
     // Initializes the game. Creates the timeline, starts it, and then spawns the
     // first Tetromino
@@ -151,6 +200,9 @@ public class TetrisLogic {
         } else {
             incrementorDrawFrames++;
         }
+
+        handleControls(); 
+        controls.updateControls();
 
     }
 
