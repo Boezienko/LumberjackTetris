@@ -1,11 +1,13 @@
 // This class takes in keyboard controls and controller controls.
 // makes using controls in the actual games code muh easier
 
+import com.studiohartman.jamepad.ControllerAxis;
+import com.studiohartman.jamepad.ControllerButton;
 import com.studiohartman.jamepad.ControllerIndex;
 import com.studiohartman.jamepad.ControllerManager;
+import com.studiohartman.jamepad.ControllerUnpluggedException;
 
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 
 public class Controls {
@@ -15,8 +17,10 @@ public class Controls {
     ControllerIndex player1;
     ControllerIndex player2;
 
-    private boolean[] buttonStatus;
-    private int[] buttonHeldLength;
+    private boolean[] buttonStatus1;
+    private int[] buttonHeldLength1;
+    private boolean[] buttonStatus2;
+    private int[] buttonHeldLength2;
 
     // easier references for the buttons boolean array
     public final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, A = 4, B = 5, X = 6, Y = 7, START = 8, SHOULDER = 9;
@@ -24,8 +28,10 @@ public class Controls {
 
     public Controls(Scene scene){
         // make the array
-        buttonStatus = new boolean[10];
-        buttonHeldLength= new int[10];
+        buttonStatus1 = new boolean[10];
+        buttonHeldLength1 = new int[10];
+        buttonStatus2 = new boolean[10];
+        buttonHeldLength2 = new int[10];
 
         // for the key presses
         scene.setOnKeyPressed(e -> handleKeyPress(e.getCode()));
@@ -41,40 +47,52 @@ public class Controls {
     }
 
     //public getter
-    public boolean[] getButtonStatus(){
-        return buttonStatus;
+    public boolean[] getButtonStatus(int player){
+        if(player == 1){
+            return buttonStatus1;
+        }
+        return buttonStatus2;
+        
+        
     }
-    public int getButtonHeldLength(int i){
-        return buttonHeldLength[i];
+
+    public int getButtonHeldLength(int i, int player){
+        if(player == 1){
+            return buttonHeldLength1[i];
+        } 
+        return buttonHeldLength2[i];
     }
-    public void setButtonHeldLength(int i, int set){
-        buttonHeldLength[i] = set;
+    public void setButtonHeldLength(int i, int set, int player){
+        if(player == 1){
+            buttonHeldLength1[i] = set;
+        }
+        buttonHeldLength2[i] = set;
     }
 
     // convert key presses to controller inputs
     private void handleKeyPress(KeyCode keyCode) {
         switch (keyCode) {
             case LEFT:
-                buttonStatus[LEFT] = true;
+                buttonStatus1[LEFT] = true;
                 break;
             case RIGHT:
-                buttonStatus[RIGHT] = true;
+                buttonStatus1[RIGHT] = true;
                 break;
             case DOWN:
-                buttonStatus[DOWN] = true;
+                buttonStatus1[DOWN] = true;
                 break;
             // This is ententional. up on controllers tends to be hard drops, while on keyboard it is rotate
             case UP:
-                buttonStatus[B] = true;
+                buttonStatus1[B] = true;
                 break;
             case Z:
-                buttonStatus[A] = true;
+                buttonStatus1[A] = true;
                 break;
             case SPACE:
-                buttonStatus[UP] = true;
+                buttonStatus1[UP] = true;
                 break;
             case H:
-                buttonStatus[SHOULDER] = true;
+                buttonStatus1[SHOULDER] = true;
             default:
                 break;
         }
@@ -82,33 +100,64 @@ public class Controls {
     private void handleKeyRelease(KeyCode keyCode) {
         switch (keyCode) {
             case LEFT:
-                buttonStatus[LEFT] = false;
+                buttonStatus1[LEFT] = false;
                 break;
             case RIGHT:
-                buttonStatus[RIGHT] = false;
+                buttonStatus1[RIGHT] = false;
                 break;
             case DOWN:
-                buttonStatus[DOWN] = false;
+                buttonStatus1[DOWN] = false;
                 break;
             // This is ententional. up on controllers tends to be hard drops, while on keyboard it is rotate
             case UP:
-                buttonStatus[B] = false;
+                buttonStatus1[B] = false;
                 break;
             case Z:
-                buttonStatus[A] = false;
+                buttonStatus1[A] = false;
                 break;
             case SPACE:
-                buttonStatus[UP] = false;
+                buttonStatus1[UP] = false;
                 break;
             case H:
-                buttonStatus[SHOULDER] = false;
+                buttonStatus1[SHOULDER] = false;
             default:
                 break;
         }
     }
 
-    public void updateControls(){
-        
+    public void updateControls(int player){
+        controllers.update();
+
+        try {
+            if(player == 1){
+                // player 1
+                buttonStatus1[A] = player1.isButtonPressed(ControllerButton.A);
+                buttonStatus1[B] = player1.isButtonPressed(ControllerButton.B);
+                buttonStatus1[SHOULDER] = player1.isButtonPressed(ControllerButton.RIGHTBUMPER);
+                buttonStatus1[RIGHT] = player1.isButtonPressed(ControllerButton.DPAD_RIGHT) || player1.getAxisState(ControllerAxis.LEFTX) > .25;
+                buttonStatus1[LEFT] = player1.isButtonPressed(ControllerButton.DPAD_LEFT) || player1.getAxisState(ControllerAxis.LEFTX) < -.25;
+                buttonStatus1[UP] = player1.isButtonPressed(ControllerButton.DPAD_UP) || player1.getAxisState(ControllerAxis.LEFTY) > .25;
+                buttonStatus1[DOWN] = player1.isButtonPressed(ControllerButton.DPAD_DOWN) || player1.getAxisState(ControllerAxis.LEFTY) < -.25;
+            }
+            else{
+                // player 2
+                buttonStatus2[A] = player2.isButtonPressed(ControllerButton.A);
+                buttonStatus2[B] = player2.isButtonPressed(ControllerButton.B);
+                buttonStatus2[SHOULDER] = player2.isButtonPressed(ControllerButton.RIGHTBUMPER);
+                buttonStatus2[RIGHT] = player2.isButtonPressed(ControllerButton.DPAD_RIGHT) || player2.getAxisState(ControllerAxis.LEFTX) > .25;
+                buttonStatus2[LEFT] = player2.isButtonPressed(ControllerButton.DPAD_LEFT) || player2.getAxisState(ControllerAxis.LEFTX) < -.25;
+                buttonStatus2[UP] = player2.isButtonPressed(ControllerButton.DPAD_UP) || player2.getAxisState(ControllerAxis.LEFTY) > .25;
+                buttonStatus2[DOWN] = player2.isButtonPressed(ControllerButton.DPAD_DOWN) || player2.getAxisState(ControllerAxis.LEFTY) < -.25;
+            }
+            
+
+            
+
+        }   
+        catch (ControllerUnpluggedException e) {   
+            System.out.println("controller unplugged");
+        }
+
     }
     
 
