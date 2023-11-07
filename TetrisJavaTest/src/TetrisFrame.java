@@ -70,6 +70,10 @@ public class TetrisFrame {
         stage.setTitle("OOP Tetris: Player " + player);
         stage.getIcons().add(new Image("/icon.png"));
 
+        if(player == 1){
+            stage.setMaximized(true);
+        }
+
         // Set the canvas to the given size. create gc reference for convenience
         Pane canvasContainer = new Pane();
         canvas = new Canvas(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE); // canvas for the tetris game
@@ -134,12 +138,29 @@ public class TetrisFrame {
 
             enableSecondPlayerBox.setOnAction(event -> {
                 if (enableSecondPlayerBox.isSelected()) {
+                    // Calculate the screen width and height
+                    double screenWidth = javafx.stage.Screen.getPrimary().getVisualBounds().getWidth();
+                    double screenHeight = javafx.stage.Screen.getPrimary().getVisualBounds().getHeight();
+                    // un maximize and set player 1 to the left
+                    stage.setMaximized(false);
+                    stage.setX(0);
+                    stage.setY(0);
+                    stage.setWidth(screenWidth / 2); // Set width to half of the screen width
+                    stage.setHeight(screenHeight); // Set height to the full screen height
+
+                    // make 2nds player stage
                     secondStage = new Stage();
+                    // sets it to the right side of the screen
+                    secondStage.setX(screenWidth/2);
+                    secondStage.setY(0);
+                    secondStage.setWidth(screenWidth/2);
+                    secondStage.setHeight(screenHeight);
                     otherTetrisFrame = new TetrisFrame(secondStage, 2, this);
                     secondStage.show();
                 } else {
                     secondStage.close();
                     secondStage = null;
+                    stage.setMaximized(true);
                 }
             });
 
