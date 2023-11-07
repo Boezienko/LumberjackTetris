@@ -4,26 +4,41 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class TetrisFrame {
     // Static ints used for sizes
-    public static final int TILE_SIZE = 30; // Size of the displayed tiles. Doesn't affect game logic
+    public static final int TILE_SIZE = 25; // Size of the displayed tiles. Doesn't affect game logic
     public static final int WIDTH = 10; // Width of the playing field
     public static final int HEIGHT = 20; // Height of the playing field
 
     public static final int FRAMERATE = 60;
 
     // Instantiate the canvas and the gc of the canvas
+    // game canvas
     private Canvas canvas;
     private GraphicsContext gc;
-    private GraphicsContext rightGC;
+    // next piece canvas
     private Canvas rightCanvas;
+    private GraphicsContext rightGC;
+    // held piece canvas
+    private Canvas heldCanvas;
+    private GraphicsContext heldGC;
+
+    //Store a frame that may contain the other player. possibly
+    private TetrisFrame otherTetrisFrame;
+    private Stage secondStage;
+    
 
     private Stage stage;
     private Scene scene;
@@ -35,38 +50,56 @@ public class TetrisFrame {
 
     // Instantiate the logic of the game.
     private TetrisLogic logic;
+    private int player;
 
     private Tetromino nextPiece;
+    private Tetromino heldPiece;
+
+    public TetrisFrame(Stage stage, int player, TetrisFrame firstPlayerFrame){
+        this(stage, player);
+        otherTetrisFrame = firstPlayerFrame;
+        }
 
     // Constructor. creates all the display elements other things will use
-    public TetrisFrame(Stage stage) {
+    public TetrisFrame(Stage stage, int player) {
         // pull in the stage argument
         this.stage = stage;
+        this.player = player;
 
         // Set the title and Icon
-        stage.setTitle("OOP Tetris");
+        stage.setTitle("OOP Tetris: Player " + player);
         stage.getIcons().add(new Image("/icon.png"));
 
         // Set the canvas to the given size. create gc reference for convenience
-        canvas = new Canvas(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE);
+        Pane canvasContainer = new Pane();
+        canvas = new Canvas(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE); // canvas for the tetris game
         gc = canvas.getGraphicsContext2D();
+        Rectangle canvasBorder = new Rectangle(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE);
+        canvasBorder.setFill(null);
+        canvasBorder.setStroke(Color.BLUE);
+        canvasContainer.getChildren().addAll(canvas, canvasBorder);
 
-        rightCanvas = new Canvas(TILE_SIZE * WIDTH, TILE_SIZE * WIDTH);
+        rightCanvas = new Canvas(TILE_SIZE * WIDTH / 2, TILE_SIZE * WIDTH / 2); //canvas for the next piece
+
+        heldCanvas = new Canvas(TILE_SIZE * WIDTH / 2, TILE_SIZE * WIDTH / 2); //canvas for the held piece
+
+        
 
         // Create a border pane to hold the canvas and additional elements
         BorderPane borderPane = new BorderPane();
-        borderPane.setCenter(canvas);
+        borderPane.setCenter(canvasContainer);
+        //borderPane.setStyle("-fx-background-color: #E0E0E0;"); // Background color
 
         // Create a VBox, Will display things that aren't the game
         VBox leftBox = new VBox(8);
         leftBox.setStyle("-fx-background-color: #E0E0E0;"); // Background color
         leftBox.setPrefWidth(200); // Minimum width of the area. will grow with objects if needed
 
-        // Create a VBox, displays next piece and score
+        // Create a VBox, displays next piece and score, and held piece
         VBox rightBox = new VBox(8);
         rightBox.setStyle("-fx-background-color: #E0E0E0;"); // Background color
         rightBox.setPrefWidth(200); // Minimum width of the area. will grow with objects if needed
-        rightBox.getChildren().addAll(new Label("Next piece:"), rightCanvas); // add canvas to draw next piece on and
+        rightBox.getChildren().addAll(new Label("Next piece:"), rightCanvas, new Label("Held piece:"), heldCanvas); // add canvas to draw next piece on and
                                                                               // text
                                                                               // box to label
 
@@ -75,27 +108,45 @@ public class TetrisFrame {
         ImageView logoImageView = new ImageView(logoImage);
         leftBox.getChildren().add(logoImageView);
 
-        // Create a button and set its label
-        Button startButton = new Button("Start Game");
-        startButton.setPrefHeight(30);
-        startButton.setPrefWidth(200);
+        // give the start and options buttons only to the first player
+        if(player == 1){
+            // Create a button and set its label
+            Button startButton = new Button("Start Game");
+            startButton.setPrefHeight(30);
+            startButton.setPrefWidth(200);
 
-        // Define an event handler to be called when the button is clicked
-        startButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                // call for the game logic to start
-                startGame();
-                // Disable the button (if enabled, keypress focus will leave the canvas when
-                // left is pressed)
-                startButton.setDisable(true);
-                // Set the focus to the canvas
-                canvas.requestFocus();
-            }
-        });
+            CheckBox enableSecondPlayerBox = new CheckBox("Enable 2 player Mode");
 
-        // Add the button to the left VBox
-        leftBox.getChildren().add(startButton);
+            // Define an event handler to be called when the button is clicked
+            startButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    // call for the game logic to start
+                    startGame();
+                    // Disable the button (if enabled, keypress focus will leave the canvas when
+                    // left is pressed)
+                    startButton.setDisable(true);
+                    enableSecondPlayerBox.setDisable(true);
+                    // Set the focus to the canvas
+                    canvas.requestFocus();
+                }
+            });
+
+            enableSecondPlayerBox.setOnAction(event -> {
+                if (enableSecondPlayerBox.isSelected()) {
+                    secondStage = new Stage();
+                    otherTetrisFrame = new TetrisFrame(secondStage, 2, this);
+                    secondStage.show();
+                } else {
+                    secondStage.close();
+                    secondStage = null;
+                }
+            });
+
+            // Add the button to the left VBox
+            leftBox.getChildren().addAll(startButton, enableSecondPlayerBox);
+        }
+        
 
         // add the box to the pane
         borderPane.setLeft(leftBox);
@@ -117,7 +168,17 @@ public class TetrisFrame {
 
     private void startGame() {
         // Start the game logic
-        logic = new TetrisLogic(scene, gc, this);
+        if(player == 1 && otherTetrisFrame != null){
+            logic = new TetrisLogic(scene, gc, this, player);
+            otherTetrisFrame.startGame();
+        }
+        else if (player == 2){
+            logic = new TetrisLogic(scene, gc, this, player);
+        }
+        else{
+            logic = new TetrisLogic(scene, gc, this, player);
+        }
+        
     }
 
     // Peeks at next tetromino and spawns it to draw it to next-piece section on
@@ -162,9 +223,65 @@ public class TetrisFrame {
                 nextPiece = tetrominoIFactory.createTetromino(board);
                 break;
         }
+        nextPiece.setX(1);
+        nextPiece.setY(1);
         // Clear previous "next-piece"
-        rightGC.clearRect(0, 0, TetrisFrame.TILE_SIZE * WIDTH, TetrisFrame.TILE_SIZE * WIDTH);
+        rightGC.clearRect(0, 0, TetrisFrame.TILE_SIZE * WIDTH / 2, TetrisFrame.TILE_SIZE * WIDTH / 2);
         // Draws next piece to right VBox
         nextPiece.draw(rightGC);
+    }
+
+    // checks the held tetromino and spawns it to draw it to held-piece section on
+    // right VBox
+    public void drawHeldTetromino(TetrisLogic logic) {
+        int[][] board = {};
+        heldGC = heldCanvas.getGraphicsContext2D();
+        // peeks at a tetromino from the queue
+        int spawnPiece = logic.getHeldPiece();
+        // create the corresponding tetromino from the queue value
+        switch (spawnPiece) {
+            case 1:
+                // Create I Piece
+                heldPiece = tetrominoIFactory.createTetromino(board);
+                break;
+            case 2:
+                // Create O Piece
+                heldPiece = tetrominoOFactory.createTetromino(board);
+                break;
+            case 3:
+                // Create T Piece
+                heldPiece = tetrominoTFactory.createTetromino(board);
+                break;
+            case 4:
+                // Create S Piece
+                heldPiece = tetrominoSFactory.createTetromino(board);
+                break;
+            case 5:
+                // Create Z Piece
+                heldPiece = tetrominoZFactory.createTetromino(board);
+                break;
+            case 6:
+                // Create J Piece
+                heldPiece = tetrominoJFactory.createTetromino(board);
+                break;
+            case 7:
+                // Create L Piece
+                heldPiece = tetrominoLFactory.createTetromino(board);
+                break;
+            default:
+                // Should absolutely never happen. but if it does, give em a null.
+                heldPiece = null;
+                break;
+        }
+
+        if(heldPiece != null){
+            heldPiece.setX(1);
+            heldPiece.setY(1);
+            // Clear previous "held-piece"
+            heldGC.clearRect(0, 0, TetrisFrame.TILE_SIZE * WIDTH / 2, TetrisFrame.TILE_SIZE * WIDTH / 2);
+            // Draws next piece to held VBox
+            heldPiece.draw(heldGC);
+        }
+        
     }
 }

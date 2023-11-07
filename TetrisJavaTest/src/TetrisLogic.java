@@ -16,6 +16,10 @@ public class TetrisLogic {
     private int[][] board;
     // Holds the current controlled piece
     private Tetromino currentPiece;
+    // Holds the held piece;
+    private int heldPiece = 0;
+    private int heldPieceCalled = 0;
+
     private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
             tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
             tetrominoTFactory = new Tetromino_TFactory(), tetrominoOFactory = new Tetromino_OFactory(),
@@ -31,6 +35,12 @@ public class TetrisLogic {
 
     private TetrisFrame frame;
 
+    // Handles the controls for the player
+    Controls controls;
+
+    // Holds which player you are
+    private int player;
+
     // Timer things, stores values that affect how often things are updated /
     // changed
     private final int gameUpdateSpeed = 120;
@@ -40,20 +50,19 @@ public class TetrisLogic {
     private int incrementorPieceGravityMovement = 0; // for determining which frame to apply gravity
     private int pieceGravityMovement = 120; // stores how fast the piece should actually move
     private int incrementorControlCooldown = 0; // for using delayed auto shift when moving tile left or right
-    // TODO: actually use all of these.
 
     // Constructor, gets the scene and the graphics context and starts the game
-    public TetrisLogic(Scene scene, GraphicsContext gc, TetrisFrame frame) {
+    public TetrisLogic(Scene scene, GraphicsContext gc, TetrisFrame frame, int player) {
         // Set up the JavaFX stuff
         this.scene = scene;
         this.gc = gc;
         this.frame = frame;
+        this.controls = new Controls(scene);
+        this.player = player;
+
         // define the size of the board with the given height and width
         board = new int[TetrisFrame.WIDTH][TetrisFrame.HEIGHT];
-
-        // Implement Key presses
-        // TODO: maybe move away from this and find a way to tie it to the update clock.
-        scene.setOnKeyPressed(e -> handleKeyPress(e.getCode()));
+        
         // Defines how many hz must pass before drawing the next frame.
         drawFramesHz = gameUpdateSpeed / TetrisFrame.FRAMERATE;
 
@@ -63,42 +72,90 @@ public class TetrisLogic {
         initializeGame();
     }
 
-    // When a key is press, move or rotate the current piece. then draw the board
-    // again.
-    private void handleKeyPress(KeyCode keyCode) {
-        switch (keyCode) {
-            case LEFT:
+    // TODO please for the love of god we gotta do something about this. this solution just feels wrong but it works oh so right
+    private void handleControls(){
+    // left, move piece left, 
+        if(controls.getButtonStatus(player)[controls.LEFT]) {
+            // DAS (delayed auto shift)
+            if(controls.getButtonHeldLength(controls.LEFT, player) == 0 || (controls.getButtonHeldLength(controls.LEFT, player) >= (gameUpdateSpeed / 4) && controls.getButtonHeldLength(controls.LEFT, player) % 4 == 0)){
                 currentPiece.move(-1, 0);
-                break;
-            case RIGHT:
+            }
+            controls.setButtonHeldLength(controls.LEFT, controls.getButtonHeldLength(controls.LEFT, player) + 1, player);
+        }
+        else{
+            controls.setButtonHeldLength(controls.LEFT, 0, player);
+        }
+    // right, moves piece right
+        if(controls.getButtonStatus(player)[controls.RIGHT]) {
+            // DAS (delayed auto shift)
+            if(controls.getButtonHeldLength(controls.RIGHT, player) == 0 || (controls.getButtonHeldLength(controls.RIGHT, player) >= (gameUpdateSpeed / 4) && controls.getButtonHeldLength(controls.RIGHT, player) % 4 == 0)){
                 currentPiece.move(1, 0);
-                break;
-            case DOWN:
-                // If down is pressed, and it can move down, it moves down
-                // If it can't, add to gravity success to speed up adding it to the board
+            }
+            controls.setButtonHeldLength(controls.RIGHT, controls.getButtonHeldLength(controls.RIGHT, player) + 1, player);
+        }
+        else{
+            controls.setButtonHeldLength(controls.RIGHT, 0, player);
+        }
+    // down, moves piece down (soft drop)
+        if(controls.getButtonStatus(player)[controls.DOWN]) {
+            // If down is pressed, and it can move down, it moves down
+            // If it can't, add to gravity success to speed up adding it to the board
+            if(controls.getButtonHeldLength(controls.DOWN, player) == 0 || (controls.getButtonHeldLength(controls.DOWN, player) >= (gameUpdateSpeed / 4) && controls.getButtonHeldLength(controls.DOWN, player) % 4 == 0)){
                 if (!currentPiece.move(0, 1)) {
                     if (currentPiece.gravitySuccess(false)) {
                         currentPiece.addToBoard(board);
                         spawnTetromino();
                     }
                 }
-
-                break;
-            case UP:
+            }
+            controls.setButtonHeldLength(controls.DOWN, controls.getButtonHeldLength(controls.DOWN, player) + 1, player);  
+        }
+        else{
+            controls.setButtonHeldLength(controls.DOWN, 0, player);
+        }
+    // B, rotates the piece clockwise
+        if(controls.getButtonStatus(player)[controls.B]) {
+            if(controls.getButtonHeldLength(controls.B, player) == 0 || (controls.getButtonHeldLength(controls.B, player) >= (gameUpdateSpeed / 2) && controls.getButtonHeldLength(controls.B, player) % 12 == 0)){
                 currentPiece.rotate(true);
-                break;
-            case Z:
+            }
+            controls.setButtonHeldLength(controls.B, controls.getButtonHeldLength(controls.B, player) + 1, player); 
+        }
+        else{
+            controls.setButtonHeldLength(controls.B, 0, player);
+        }
+    // A, rotates the piece counter clockwise
+        if(controls.getButtonStatus(player)[controls.A]) {
+            if(controls.getButtonHeldLength(controls.A, player) == 0 || (controls.getButtonHeldLength(controls.A, player) >= (gameUpdateSpeed / 2) && controls.getButtonHeldLength(controls.A, player) % 12 == 0)){
                 currentPiece.rotate(false);
-                break;
-            case SPACE:
+            }
+            controls.setButtonHeldLength(controls.A, controls.getButtonHeldLength(controls.A, player) + 1, player); 
+        }
+        else{
+            controls.setButtonHeldLength(controls.A, 0, player);
+        }
+    // UP, hard drops the piece
+        if(controls.getButtonStatus(player)[controls.UP]) {
+            if(controls.getButtonHeldLength(controls.UP, player) == 0){
                 currentPiece.hardDrop();
                 currentPiece.addToBoard(board);
                 spawnTetromino();
-                break;
-            default:
-                break;
+            }
+            controls.setButtonHeldLength(controls.UP, controls.getButtonHeldLength(controls.UP, player) + 1, player); 
         }
-    }
+        else{
+            controls.setButtonHeldLength(controls.UP, 0, player);
+        }
+    // SHOULDER, holds the current given piece
+        if(controls.getButtonStatus(player)[controls.SHOULDER]) {
+            if(controls.getButtonHeldLength(controls.SHOULDER, player) == 0){
+                holdTetromino();
+            }
+            controls.setButtonHeldLength(controls.SHOULDER, controls.getButtonHeldLength(controls.SHOULDER, player) + 1, player); 
+        }
+        else{
+            controls.setButtonHeldLength(controls.SHOULDER, 0, player);
+        }
+    }// end controls
 
     // Initializes the game. Creates the timeline, starts it, and then spawns the
     // first Tetromino
@@ -146,6 +203,68 @@ public class TetrisLogic {
             incrementorDrawFrames++;
         }
 
+        handleControls(); 
+        controls.updateControls(player);
+        
+    }
+
+    // Stores the current piece in held tetromino, and vise versa
+    private void holdTetromino(){
+        if(heldPieceCalled == 0){
+            // if held piece is empty, hold it and spawn a new one
+        if(heldPiece == 0){
+            heldPiece = currentPiece.colorBoard;
+            heldPieceCalled++;
+            spawnTetromino();
+        }
+        else{
+            int temp;
+            temp = currentPiece.colorBoard;
+            // create the correspondingf tetromino from the queue value
+            switch (heldPiece) {
+                case 1:
+                    // Create I Piece
+                    currentPiece = tetrominoIFactory.createTetromino(board);
+                    break;
+                case 2:
+                    // Create O Piece
+                    currentPiece = tetrominoOFactory.createTetromino(board);
+                    break;
+                case 3:
+                    // Create T Piece
+                    currentPiece = tetrominoTFactory.createTetromino(board);
+                    break;
+                case 4:
+                    // Create S Piece
+                    currentPiece = tetrominoSFactory.createTetromino(board);
+                    break;
+                case 5:
+                    // Create Z Piece
+                    currentPiece = tetrominoZFactory.createTetromino(board);
+                    break;
+                case 6:
+                    // Create J Piece
+                    currentPiece = tetrominoJFactory.createTetromino(board);
+                    break;
+                case 7:
+                    // Create L Piece
+                    currentPiece = tetrominoLFactory.createTetromino(board);
+                    break;
+                default:
+                    // Should absolutely never happen. but if it does, give em an I.
+                    currentPiece = tetrominoIFactory.createTetromino(board);
+                    break;
+            }
+            heldPiece = temp;
+
+        }
+        // Set to true
+        heldPieceCalled++;
+        }
+    }
+
+    public int getHeldPiece(){
+        return heldPiece;
     }
 
     // Spawns a tetromino. Pulls from the queue
@@ -194,8 +313,13 @@ public class TetrisLogic {
             tetrominoQueue = generateTetrominoQueue();
         }
         frame.drawNextTetromino(this);
+        // New piece spawned, it is now ok for the player to hold again
+        if(heldPieceCalled > 0){
+            heldPieceCalled--;
+        }
     }
 
+    // When the queue is empty, call this to generate a new 7 bag of pieces
     public static Queue<Integer> generateTetrominoQueue() {
         // Create a list with numbers 1 to 7
         List<Integer> numbers = new LinkedList<>();
@@ -225,6 +349,9 @@ public class TetrisLogic {
         // Draws the current controlled piece
         currentPiece.draw(gc);
         currentPiece.drawShadow(gc);
+
+        // Draws the held piece in the right vbox
+        frame.drawHeldTetromino(this);
 
         // Iterates over the board array and draws each block
         for (int x = 0; x < TetrisFrame.WIDTH; x++) {
