@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 
 public class TetrisFrame {
     // Static ints used for sizes
-    public static final int TILE_SIZE = 35; // Size of the displayed tiles. Doesn't affect game logic
+    public double TILE_SIZE = 35; // Size of the displayed tiles. Doesn't affect game logic
     public static final int WIDTH = 10; // Width of the playing field
     public static final int HEIGHT = 20; // Height of the playing field
 
@@ -42,6 +42,10 @@ public class TetrisFrame {
 
     private Stage stage;
     private Scene scene;
+    private BorderPane borderPane;
+    private Rectangle canvasBorder;
+    private VBox rightBox;
+    private VBox leftBox;
 
     private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
             tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
@@ -79,7 +83,7 @@ public class TetrisFrame {
         Pane canvasContainer = new Pane();
         canvas = new Canvas(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE); // canvas for the tetris game
         gc = canvas.getGraphicsContext2D();
-        Rectangle canvasBorder = new Rectangle(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE);
+        canvasBorder = new Rectangle(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE);
         canvasBorder.setFill(null);
         canvasBorder.setStroke(Color.BLUE);
         canvasContainer.getChildren().addAll(canvas, canvasBorder);
@@ -91,23 +95,24 @@ public class TetrisFrame {
         
 
         // Create a border pane to hold the canvas and additional elements
-        BorderPane borderPane = new BorderPane();
+        borderPane = new BorderPane();
         borderPane.setCenter(canvasContainer);
         //borderPane.setStyle("-fx-background-color: #E0E0E0;"); // Background color
+        
 
         // Create a VBox, Will display things that aren't the game
-        VBox leftBox = new VBox(8);
+        leftBox = new VBox(8);
         leftBox.setStyle("-fx-background-color: #E0E0E0;"); // Background color
         leftBox.setPrefWidth(200); // Minimum width of the area. will grow with objects if needed
 
         // Create a VBox, displays next piece and score, and held piece
-        VBox rightBox = new VBox(8);
+        rightBox = new VBox(8);
         rightBox.setStyle("-fx-background-color: #E0E0E0;"); // Background color
         rightBox.setPrefWidth(200); // Minimum width of the area. will grow with objects if needed
         rightBox.getChildren().addAll(new Label("Next piece:"), rightCanvas, new Label("Held piece:"), heldCanvas); // add canvas to draw next piece on and
                                                                               // text
                                                                               // box to label
-
+                                                                              
         // Add an image to the box
         Image logoImage = new Image("/Logo.jpg");
         ImageView logoImageView = new ImageView(logoImage);
@@ -184,8 +189,43 @@ public class TetrisFrame {
 
         // Show the stage
         stage.show();
+        
+
+        // Handle screen resizes
+        scene.widthProperty().addListener((observable, oldValue, newValue) -> {
+            // Call your function when the window width changes
+            onResize();
+        });
+
+        scene.heightProperty().addListener((observable, oldValue, newValue) -> {
+            // Call your function when the window height changes
+            onResize();
+        });
+
+        onResize();
 
         canvas.requestFocus();
+    }
+
+    public void onResize(){
+        if(borderPane.getCenter().getLayoutBounds().getHeight() / HEIGHT < borderPane.getCenter().getLayoutBounds().getWidth() / WIDTH){
+            TILE_SIZE = borderPane.getCenter().getLayoutBounds().getHeight() / HEIGHT;
+        }
+        else{
+            TILE_SIZE = borderPane.getCenter().getLayoutBounds().getWidth() / WIDTH;
+        }
+        System.out.println(TILE_SIZE);
+        canvas.setHeight(HEIGHT * TILE_SIZE);
+        canvas.setWidth(WIDTH * TILE_SIZE);
+        heldCanvas.setHeight(TILE_SIZE * WIDTH / 2);
+        heldCanvas.setWidth(TILE_SIZE * WIDTH / 2);
+        rightCanvas.setHeight(TILE_SIZE * WIDTH / 2);
+        rightCanvas.setHeight(TILE_SIZE * WIDTH / 2);
+
+        canvasBorder.setWidth(WIDTH * TILE_SIZE);
+        canvasBorder.setHeight(HEIGHT * TILE_SIZE);
+
+        rightBox.setMaxWidth(TILE_SIZE * 4);
     }
 
     private void startGame() {
@@ -193,12 +233,15 @@ public class TetrisFrame {
         if(player == 1 && otherTetrisFrame != null){
             logic = new TetrisLogic(scene, gc, this, player);
             otherTetrisFrame.startGame();
+            onResize();
         }
         else if (player == 2){
             logic = new TetrisLogic(scene, gc, this, player);
+            onResize();
         }
         else{
             logic = new TetrisLogic(scene, gc, this, player);
+            onResize();
         }
         
     }
@@ -263,9 +306,9 @@ public class TetrisFrame {
         nextPiece.setX(1);
         nextPiece.setY(1);
         // Clear previous "next-piece"
-        rightGC.clearRect(0, 0, TetrisFrame.TILE_SIZE * WIDTH / 2, TetrisFrame.TILE_SIZE * WIDTH / 2);
+        rightGC.clearRect(0, 0, TILE_SIZE * WIDTH, TILE_SIZE * WIDTH);
         // Draws next piece to right VBox
-        nextPiece.draw(rightGC);
+        nextPiece.draw(rightGC, this);
     }
 
     // checks the held tetromino and spawns it to draw it to held-piece section on
@@ -315,9 +358,9 @@ public class TetrisFrame {
             heldPiece.setX(1);
             heldPiece.setY(1);
             // Clear previous "held-piece"
-            heldGC.clearRect(0, 0, TetrisFrame.TILE_SIZE * WIDTH / 2, TetrisFrame.TILE_SIZE * WIDTH / 2);
+            heldGC.clearRect(0, 0, TILE_SIZE * WIDTH, TILE_SIZE * WIDTH);
             // Draws next piece to held VBox
-            heldPiece.draw(heldGC);
+            heldPiece.draw(heldGC, this);
         }
         
     }

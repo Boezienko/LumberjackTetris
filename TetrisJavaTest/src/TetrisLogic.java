@@ -365,11 +365,11 @@ public class TetrisLogic {
     // Updates the board. Clears the canvas and draws the next frame of the game.
     private void drawBoard() {
         // Clears the board
-        gc.clearRect(0, 0, TetrisFrame.WIDTH * TetrisFrame.TILE_SIZE, TetrisFrame.HEIGHT * TetrisFrame.TILE_SIZE);
+        gc.clearRect(0, 0, TetrisFrame.WIDTH * frame.TILE_SIZE, TetrisFrame.HEIGHT * frame.TILE_SIZE);
 
         // Draws the current controlled piece
-        currentPiece.draw(gc);
-        currentPiece.drawShadow(gc);
+        currentPiece.draw(gc, frame);
+        currentPiece.drawShadow(gc, frame);
 
         // Draws the held piece in the right vbox
         frame.drawHeldTetromino(this);
@@ -410,8 +410,8 @@ public class TetrisLogic {
                     LinearGradient gradient = new LinearGradient(0, 1, 1, 0, true,  CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, curColor.darker()), new Stop(1, curColor) });
                     gc.setFill(gradient); // Set the color of the Tetromino
 
-                    gc.fillRect(x * TetrisFrame.TILE_SIZE + 2, y * TetrisFrame.TILE_SIZE + 2, TetrisFrame.TILE_SIZE - 2,
-                            TetrisFrame.TILE_SIZE - 2);
+                    gc.fillRect(x * frame.TILE_SIZE + 2, y * frame.TILE_SIZE + 2, frame.TILE_SIZE - 2,
+                            frame.TILE_SIZE - 2);
                 }
             }
             // System.out.println();
