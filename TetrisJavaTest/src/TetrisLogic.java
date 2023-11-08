@@ -196,6 +196,9 @@ public class TetrisLogic {
             return;
         }
 
+        // TODO remove this. it doesnt belong here but it definitely ensures that the screen is the right size always.
+        frame.onResize();
+
         clearLines();
 
         // Move the current piece if it is time to do so

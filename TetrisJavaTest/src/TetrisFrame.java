@@ -226,6 +226,11 @@ public class TetrisFrame {
         canvasBorder.setHeight(HEIGHT * TILE_SIZE);
 
         rightBox.setMaxWidth(TILE_SIZE * 4);
+
+        if(logic != null){
+            drawHeldTetromino(logic);
+            drawNextTetromino(logic);
+        }
     }
 
     private void startGame() {
