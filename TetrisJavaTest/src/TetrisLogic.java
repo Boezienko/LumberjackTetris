@@ -9,6 +9,9 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.util.Duration;
 
 public class TetrisLogic {
@@ -380,10 +383,10 @@ public class TetrisLogic {
                     Color curColor;
                     switch (board[x][y]) {
                         case 1:
-                            curColor = Color.CYAN.darker();
+                            curColor = Color.CYAN;
                             break;
                         case 2:
-                            curColor = Color.YELLOW.darker();
+                            curColor = Color.YELLOW;
                             break;
                         case 3:
                             curColor = Color.PURPLE;
@@ -404,7 +407,9 @@ public class TetrisLogic {
                             curColor = Color.GRAY;
                             break;
                     }
-                    gc.setFill(curColor); // Set the color of the Tetromino
+                    LinearGradient gradient = new LinearGradient(0, 1, 1, 0, true,  CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, curColor.darker()), new Stop(1, curColor) });
+                    gc.setFill(gradient); // Set the color of the Tetromino
+
                     gc.fillRect(x * TetrisFrame.TILE_SIZE + 2, y * TetrisFrame.TILE_SIZE + 2, TetrisFrame.TILE_SIZE - 2,
                             TetrisFrame.TILE_SIZE - 2);
                 }

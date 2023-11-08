@@ -1,5 +1,8 @@
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 
 /*  Abstract Tetromino method. all the pieces extend from this one.
 // This class contains the shape of the piece, it's xy location, the color, 
@@ -218,7 +221,8 @@ public abstract class Tetromino {
 
     // Draws the current piece to the canvas. called inside DrawBoard
     public void draw(GraphicsContext gc) {
-        gc.setFill(color);
+        LinearGradient gradient = new LinearGradient(0, 1, 1, 0, true,  CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, color.darker()), new Stop(1, color) });
+        gc.setFill(gradient); // Set the color of the Tetromino
         for (int i = 0; i < shape.length; i++) {
             for (int j = 0; j < shape[i].length; j++) {
                 if (shape[i][j] != 0) {
@@ -232,7 +236,7 @@ public abstract class Tetromino {
 
     // Draws the shadow of the piece, where it would fall if hard dropped now
     public void drawShadow(GraphicsContext gc) {
-        gc.setStroke(color);
+        gc.setStroke(Color.BLACK);
 
         // Calculate the lowest position where the piece can move
         int lowestY = 0;
