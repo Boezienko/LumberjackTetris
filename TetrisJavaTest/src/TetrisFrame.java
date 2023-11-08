@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 
 public class TetrisFrame {
     // Static ints used for sizes
-    public static final int TILE_SIZE = 25; // Size of the displayed tiles. Doesn't affect game logic
+    public static final int TILE_SIZE = 35; // Size of the displayed tiles. Doesn't affect game logic
     public static final int WIDTH = 10; // Width of the playing field
     public static final int HEIGHT = 20; // Height of the playing field
 
@@ -51,6 +51,7 @@ public class TetrisFrame {
     // Instantiate the logic of the game.
     private TetrisLogic logic;
     private int player;
+    private boolean paused = false;
 
     private Tetromino nextPiece;
     private Tetromino heldPiece;
@@ -200,6 +201,21 @@ public class TetrisFrame {
             logic = new TetrisLogic(scene, gc, this, player);
         }
         
+    }
+
+    public boolean getPaused(){
+        return paused;
+    }
+
+    public void pause(boolean initiated){
+        if(initiated && otherTetrisFrame != null){
+            otherTetrisFrame.pause(false);
+        }
+        if(!paused){
+            //logic.timeline.pause();
+            gc.drawImage(new Image("/pause.png"), 0, 0, canvas.getWidth(), canvas.getWidth());
+        }
+        paused = !paused;
     }
 
     // Peeks at next tetromino and spawns it to draw it to next-piece section on

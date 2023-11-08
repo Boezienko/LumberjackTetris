@@ -278,7 +278,7 @@ public abstract class Tetromino {
             playerMoveTime++;
         }
         // If the count has reached 4, return true (used to force the piece to drop)
-        if (playerMoveTime > 3) {
+        if (playerMoveTime > 2) {
             playerMoveTime = 0;
             return true;
 
