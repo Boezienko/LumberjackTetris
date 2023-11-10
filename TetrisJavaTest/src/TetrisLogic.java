@@ -368,7 +368,19 @@ public class TetrisLogic {
     // Updates the board. Clears the canvas and draws the next frame of the game.
     private void drawBoard() {
         // Clears the board
-        gc.clearRect(0, 0, TetrisFrame.WIDTH * frame.TILE_SIZE, TetrisFrame.HEIGHT * frame.TILE_SIZE);
+        gc.setFill(Color.GRAY);
+        gc.fillRect(0, 0, TetrisFrame.WIDTH * frame.TILE_SIZE, TetrisFrame.HEIGHT * frame.TILE_SIZE);
+        //Draw the background 
+        gc.setStroke(Color.GRAY); // Set the color of the tiling
+        gc.setFill(Color.BLACK);
+        for (int x = 0; x < TetrisFrame.WIDTH; x++) {
+            for (int y = 0; y < TetrisFrame.HEIGHT; y++) {
+                gc.fillRect(x * frame.TILE_SIZE + 2, y * frame.TILE_SIZE + 2, frame.TILE_SIZE - 2,
+                            frame.TILE_SIZE - 2);
+                gc.strokeRect(x * frame.TILE_SIZE + 2, y * frame.TILE_SIZE + 2, frame.TILE_SIZE - 2,
+                        frame.TILE_SIZE - 2);
+            }
+        }
 
         // Draws the current controlled piece
         currentPiece.draw(gc, frame);
@@ -412,8 +424,10 @@ public class TetrisLogic {
                     }
                     LinearGradient gradient = new LinearGradient(0, 1, 1, 0, true,  CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, curColor.darker()), new Stop(1, curColor) });
                     gc.setFill(gradient); // Set the color of the Tetromino
-
+                    gc.setStroke(Color.WHITE);
                     gc.fillRect(x * frame.TILE_SIZE + 2, y * frame.TILE_SIZE + 2, frame.TILE_SIZE - 2,
+                            frame.TILE_SIZE - 2);
+                    gc.strokeRect(x * frame.TILE_SIZE + 2, y * frame.TILE_SIZE + 2, frame.TILE_SIZE - 2,
                             frame.TILE_SIZE - 2);
                 }
             }

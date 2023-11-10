@@ -222,6 +222,7 @@ public abstract class Tetromino {
     // Draws the current piece to the canvas. called inside DrawBoard
     public void draw(GraphicsContext gc, TetrisFrame frame) {
         LinearGradient gradient = new LinearGradient(0, 1, 1, 0, true,  CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, color.darker()), new Stop(1, color) });
+        gc.setStroke(Color.WHITE);
         gc.setFill(gradient); // Set the color of the Tetromino
         for (int i = 0; i < shape.length; i++) {
             for (int j = 0; j < shape[i].length; j++) {
@@ -229,6 +230,7 @@ public abstract class Tetromino {
                     double xPos = (x + j) * frame.TILE_SIZE;
                     double yPos = (y + i) * frame.TILE_SIZE;
                     gc.fillRect(xPos + 2, yPos + 2, frame.TILE_SIZE - 2, frame.TILE_SIZE - 2);
+                    gc.strokeRect(xPos + 2, yPos + 2, frame.TILE_SIZE - 2, frame.TILE_SIZE - 2);
                 }
             }
         }
@@ -236,7 +238,8 @@ public abstract class Tetromino {
 
     // Draws the shadow of the piece, where it would fall if hard dropped now
     public void drawShadow(GraphicsContext gc, TetrisFrame frame) {
-        gc.setStroke(Color.BLACK);
+        gc.setStroke(Color.WHITE);
+        gc.setFill(color.desaturate());
 
         // Calculate the lowest position where the piece can move
         int lowestY = 0;
@@ -252,6 +255,7 @@ public abstract class Tetromino {
                     // y position is where it currently is + as far as it could be - 1 because
                     // arrays
                     double yPos = (y + lowestY + i - 1) * frame.TILE_SIZE;
+                    gc.fillRect(xPos + 2, yPos + 2, frame.TILE_SIZE - 2, frame.TILE_SIZE - 2);
                     gc.strokeRect(xPos + 2, yPos + 2, frame.TILE_SIZE - 2, frame.TILE_SIZE - 2);
                 }
             }
