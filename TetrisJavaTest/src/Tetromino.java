@@ -1,5 +1,8 @@
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 
 /*  Abstract Tetromino method. all the pieces extend from this one.
 // This class contains the shape of the piece, it's xy location, the color, 
@@ -217,22 +220,26 @@ public abstract class Tetromino {
     }
 
     // Draws the current piece to the canvas. called inside DrawBoard
-    public void draw(GraphicsContext gc) {
-        gc.setFill(color);
+    public void draw(GraphicsContext gc, TetrisFrame frame) {
+        LinearGradient gradient = new LinearGradient(0, 1, 1, 0, true,  CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, color.darker()), new Stop(1, color) });
+        gc.setStroke(Color.WHITE);
+        gc.setFill(gradient); // Set the color of the Tetromino
         for (int i = 0; i < shape.length; i++) {
             for (int j = 0; j < shape[i].length; j++) {
                 if (shape[i][j] != 0) {
-                    int xPos = (x + j) * TetrisFrame.TILE_SIZE;
-                    int yPos = (y + i) * TetrisFrame.TILE_SIZE;
-                    gc.fillRect(xPos + 2, yPos + 2, TetrisFrame.TILE_SIZE - 2, TetrisFrame.TILE_SIZE - 2);
+                    double xPos = (x + j) * frame.TILE_SIZE;
+                    double yPos = (y + i) * frame.TILE_SIZE;
+                    gc.fillRect(xPos + 2, yPos + 2, frame.TILE_SIZE - 2, frame.TILE_SIZE - 2);
+                    gc.strokeRect(xPos + 2, yPos + 2, frame.TILE_SIZE - 2, frame.TILE_SIZE - 2);
                 }
             }
         }
     }
 
     // Draws the shadow of the piece, where it would fall if hard dropped now
-    public void drawShadow(GraphicsContext gc) {
-        gc.setStroke(color);
+    public void drawShadow(GraphicsContext gc, TetrisFrame frame) {
+        gc.setStroke(Color.WHITE);
+        gc.setFill(color.desaturate());
 
         // Calculate the lowest position where the piece can move
         int lowestY = 0;
@@ -244,11 +251,12 @@ public abstract class Tetromino {
             for (int j = 0; j < shape[i].length; j++) {
                 if (shape[i][j] != 0) {
                     // Draw the outline of the cell
-                    int xPos = (x + j) * TetrisFrame.TILE_SIZE;
+                    double xPos = (x + j) * frame.TILE_SIZE;
                     // y position is where it currently is + as far as it could be - 1 because
                     // arrays
-                    int yPos = (y + lowestY + i - 1) * TetrisFrame.TILE_SIZE;
-                    gc.strokeRect(xPos + 2, yPos + 2, TetrisFrame.TILE_SIZE - 2, TetrisFrame.TILE_SIZE - 2);
+                    double yPos = (y + lowestY + i - 1) * frame.TILE_SIZE;
+                    gc.fillRect(xPos + 2, yPos + 2, frame.TILE_SIZE - 2, frame.TILE_SIZE - 2);
+                    gc.strokeRect(xPos + 2, yPos + 2, frame.TILE_SIZE - 2, frame.TILE_SIZE - 2);
                 }
             }
         }
@@ -278,7 +286,7 @@ public abstract class Tetromino {
             playerMoveTime++;
         }
         // If the count has reached 4, return true (used to force the piece to drop)
-        if (playerMoveTime > 3) {
+        if (playerMoveTime > 2) {
             playerMoveTime = 0;
             return true;
 

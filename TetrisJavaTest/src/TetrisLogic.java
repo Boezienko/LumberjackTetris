@@ -9,6 +9,9 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.util.Duration;
 
 public class TetrisLogic {
@@ -30,7 +33,7 @@ public class TetrisLogic {
 
     // JavaFX things
     private Scene scene;
-    private Timeline timeline;
+    public Timeline timeline;
     private GraphicsContext gc;
 
     private TetrisFrame frame;
@@ -49,7 +52,6 @@ public class TetrisLogic {
     private int drawFramesHz; // for how often to actually update the frame
     private int incrementorPieceGravityMovement = 0; // for determining which frame to apply gravity
     private int pieceGravityMovement = 120; // stores how fast the piece should actually move
-    private int incrementorControlCooldown = 0; // for using delayed auto shift when moving tile left or right
 
     // Constructor, gets the scene and the graphics context and starts the game
     public TetrisLogic(Scene scene, GraphicsContext gc, TetrisFrame frame, int player) {
@@ -77,7 +79,7 @@ public class TetrisLogic {
     // left, move piece left, 
         if(controls.getButtonStatus(player)[controls.LEFT]) {
             // DAS (delayed auto shift)
-            if(controls.getButtonHeldLength(controls.LEFT, player) == 0 || (controls.getButtonHeldLength(controls.LEFT, player) >= (gameUpdateSpeed / 4) && controls.getButtonHeldLength(controls.LEFT, player) % 4 == 0)){
+            if(controls.getButtonHeldLength(controls.LEFT, player) == 0 || (controls.getButtonHeldLength(controls.LEFT, player) >= (gameUpdateSpeed / 5) && controls.getButtonHeldLength(controls.LEFT, player) % 5 == 0)){
                 currentPiece.move(-1, 0);
             }
             controls.setButtonHeldLength(controls.LEFT, controls.getButtonHeldLength(controls.LEFT, player) + 1, player);
@@ -88,7 +90,7 @@ public class TetrisLogic {
     // right, moves piece right
         if(controls.getButtonStatus(player)[controls.RIGHT]) {
             // DAS (delayed auto shift)
-            if(controls.getButtonHeldLength(controls.RIGHT, player) == 0 || (controls.getButtonHeldLength(controls.RIGHT, player) >= (gameUpdateSpeed / 4) && controls.getButtonHeldLength(controls.RIGHT, player) % 4 == 0)){
+            if(controls.getButtonHeldLength(controls.RIGHT, player) == 0 || (controls.getButtonHeldLength(controls.RIGHT, player) >= (gameUpdateSpeed / 5) && controls.getButtonHeldLength(controls.RIGHT, player) % 5 == 0)){
                 currentPiece.move(1, 0);
             }
             controls.setButtonHeldLength(controls.RIGHT, controls.getButtonHeldLength(controls.RIGHT, player) + 1, player);
@@ -102,10 +104,10 @@ public class TetrisLogic {
             // If it can't, add to gravity success to speed up adding it to the board
             if(controls.getButtonHeldLength(controls.DOWN, player) == 0 || (controls.getButtonHeldLength(controls.DOWN, player) >= (gameUpdateSpeed / 4) && controls.getButtonHeldLength(controls.DOWN, player) % 4 == 0)){
                 if (!currentPiece.move(0, 1)) {
-                    if (currentPiece.gravitySuccess(false)) {
-                        currentPiece.addToBoard(board);
-                        spawnTetromino();
-                    }
+                    //if (currentPiece.gravitySuccess(false)) {
+                    //    currentPiece.addToBoard(board);
+                    //    spawnTetromino();
+                    //}
                 }
             }
             controls.setButtonHeldLength(controls.DOWN, controls.getButtonHeldLength(controls.DOWN, player) + 1, player);  
@@ -157,6 +159,19 @@ public class TetrisLogic {
         }
     }// end controls
 
+    private void handlePausing(){
+        // START, handles pausing
+        if(controls.getButtonStatus(player)[controls.START]) {
+            if(controls.getButtonHeldLength(controls.START, player) == 0){
+                frame.pause(true);
+            }
+            controls.setButtonHeldLength(controls.START, controls.getButtonHeldLength(controls.START, player) + 1, player); 
+        }
+        else{
+            controls.setButtonHeldLength(controls.START, 0, player);
+        }
+    }
+
     // Initializes the game. Creates the timeline, starts it, and then spawns the
     // first Tetromino
     private void initializeGame() {
@@ -175,6 +190,15 @@ public class TetrisLogic {
 
     // Called every "tick". Handles piece gravity and adding to the board.
     private void update() {
+        handlePausing();
+        if(frame.getPaused()){
+            controls.updateControls(player);
+            return;
+        }
+
+        // TODO remove this. it doesnt belong here but it definitely ensures that the screen is the right size always.
+        frame.onResize();
+
         clearLines();
 
         // Move the current piece if it is time to do so
@@ -344,11 +368,23 @@ public class TetrisLogic {
     // Updates the board. Clears the canvas and draws the next frame of the game.
     private void drawBoard() {
         // Clears the board
-        gc.clearRect(0, 0, TetrisFrame.WIDTH * TetrisFrame.TILE_SIZE, TetrisFrame.HEIGHT * TetrisFrame.TILE_SIZE);
+        gc.setFill(Color.GRAY);
+        gc.fillRect(0, 0, TetrisFrame.WIDTH * frame.TILE_SIZE, TetrisFrame.HEIGHT * frame.TILE_SIZE);
+        //Draw the background 
+        gc.setStroke(Color.GRAY); // Set the color of the tiling
+        gc.setFill(Color.BLACK);
+        for (int x = 0; x < TetrisFrame.WIDTH; x++) {
+            for (int y = 0; y < TetrisFrame.HEIGHT; y++) {
+                gc.fillRect(x * frame.TILE_SIZE + 2, y * frame.TILE_SIZE + 2, frame.TILE_SIZE - 2,
+                            frame.TILE_SIZE - 2);
+                gc.strokeRect(x * frame.TILE_SIZE + 2, y * frame.TILE_SIZE + 2, frame.TILE_SIZE - 2,
+                        frame.TILE_SIZE - 2);
+            }
+        }
 
         // Draws the current controlled piece
-        currentPiece.draw(gc);
-        currentPiece.drawShadow(gc);
+        currentPiece.draw(gc, frame);
+        currentPiece.drawShadow(gc, frame);
 
         // Draws the held piece in the right vbox
         frame.drawHeldTetromino(this);
@@ -362,10 +398,10 @@ public class TetrisLogic {
                     Color curColor;
                     switch (board[x][y]) {
                         case 1:
-                            curColor = Color.CYAN.darker();
+                            curColor = Color.CYAN;
                             break;
                         case 2:
-                            curColor = Color.YELLOW.darker();
+                            curColor = Color.YELLOW;
                             break;
                         case 3:
                             curColor = Color.PURPLE;
@@ -386,9 +422,13 @@ public class TetrisLogic {
                             curColor = Color.GRAY;
                             break;
                     }
-                    gc.setFill(curColor); // Set the color of the Tetromino
-                    gc.fillRect(x * TetrisFrame.TILE_SIZE + 2, y * TetrisFrame.TILE_SIZE + 2, TetrisFrame.TILE_SIZE - 2,
-                            TetrisFrame.TILE_SIZE - 2);
+                    LinearGradient gradient = new LinearGradient(0, 1, 1, 0, true,  CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, curColor.darker()), new Stop(1, curColor) });
+                    gc.setFill(gradient); // Set the color of the Tetromino
+                    gc.setStroke(Color.WHITE);
+                    gc.fillRect(x * frame.TILE_SIZE + 2, y * frame.TILE_SIZE + 2, frame.TILE_SIZE - 2,
+                            frame.TILE_SIZE - 2);
+                    gc.strokeRect(x * frame.TILE_SIZE + 2, y * frame.TILE_SIZE + 2, frame.TILE_SIZE - 2,
+                            frame.TILE_SIZE - 2);
                 }
             }
             // System.out.println();

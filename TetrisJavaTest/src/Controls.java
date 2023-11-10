@@ -91,8 +91,12 @@ public class Controls {
             case SPACE:
                 buttonStatus1[UP] = true;
                 break;
-            case H:
+            case C:
                 buttonStatus1[SHOULDER] = true;
+                break;
+            case ENTER:
+                buttonStatus1[START] = true;
+                break;
             default:
                 break;
         }
@@ -118,8 +122,12 @@ public class Controls {
             case SPACE:
                 buttonStatus1[UP] = false;
                 break;
-            case H:
+            case C:
                 buttonStatus1[SHOULDER] = false;
+                break;
+            case ENTER:
+                buttonStatus1[START] = false;
+                break;
             default:
                 break;
         }
