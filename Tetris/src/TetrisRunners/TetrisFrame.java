@@ -126,12 +126,19 @@ public class TetrisFrame {
         // give the start and options buttons only to the first player
         if(player == 1){
             // Create a button and set its label
-            Button startButton = new Button("Start Game");
-            startButton.setPrefHeight(30);
-            startButton.setPrefWidth(200);
-
+            // Button startButton = new Button("Start Game");
+            // startButton.setPrefHeight(30);
+            // startButton.setPrefWidth(200);
+            StartButton startButton = new StartButton("Start Button", 20, 200);
             CheckBox enableSecondPlayerBox = new CheckBox("Enable 2 player Mode");
 
+            startButton.onPress(new EventHandler<ActionEvent>(){
+                @Override
+                public void handle(ActionEvent event){
+
+                }
+            });
+            
             // Define an event handler to be called when the button is clicked
             startButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

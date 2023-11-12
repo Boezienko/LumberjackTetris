@@ -11,6 +11,8 @@ public class Game extends Application {
     // Starts the Magic
     @Override
     public void start(Stage stage) throws Exception {
+        
+
         TetrisFrame player1 = new TetrisFrame(stage, 1);
     }
 }
