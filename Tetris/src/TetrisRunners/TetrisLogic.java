@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import Leveling.LevelManager;
+import Leveling.ScoreManager;
 import TetrisHelper.Tetrominos.*;
 import TetrisHelper.Controls;
 import TetrisHelper.Factories.*;
@@ -33,6 +35,12 @@ public class TetrisLogic {
             tetrominoTFactory = new Tetromino_TFactory(), tetrominoOFactory = new Tetromino_OFactory(),
             tetrominoJFactory = new Tetromino_JFactory(), tetrominoZFactory = new Tetromino_ZFactory();
 
+    // Instance of LevelManager to allow incrementing level
+    private LevelManager levelManager;
+
+    // Instance of LevelManager to allow incrementing score
+    private ScoreManager scoreManager;
+
     // queue that holds the current pieces for the 7 bag
     private Queue<Integer> tetrominoQueue = new LinkedList<>();
 
@@ -58,6 +66,8 @@ public class TetrisLogic {
     private int incrementorPieceGravityMovement = 0; // for determining which frame to apply gravity
     private int pieceGravityMovement = 120; // stores how fast the piece should actually move
 
+    private int totalLinesCleared = 0;
+
     // Constructor, gets the scene and the graphics context and starts the game
     public TetrisLogic(Scene scene, GraphicsContext gc, TetrisFrame frame, int player) {
         // Set up the JavaFX stuff
@@ -67,9 +77,12 @@ public class TetrisLogic {
         this.controls = new Controls(scene);
         this.player = player;
 
+        levelManager = new LevelManager();
+        scoreManager = new ScoreManager();
+
         // define the size of the board with the given height and width
         board = new int[TetrisFrame.WIDTH][TetrisFrame.HEIGHT];
-        
+
         // Defines how many hz must pass before drawing the next frame.
         drawFramesHz = gameUpdateSpeed / TetrisFrame.FRAMERATE;
 
@@ -79,100 +92,108 @@ public class TetrisLogic {
         initializeGame();
     }
 
-    // TODO please for the love of god we gotta do something about this. this solution just feels wrong but it works oh so right
-    private void handleControls(){
-    // left, move piece left, 
-        if(controls.getButtonStatus(player)[controls.LEFT]) {
+    // TODO please for the love of god we gotta do something about this. this
+    // solution just feels wrong but it works oh so right
+    private void handleControls() {
+        // left, move piece left,
+        if (controls.getButtonStatus(player)[controls.LEFT]) {
             // DAS (delayed auto shift)
-            if(controls.getButtonHeldLength(controls.LEFT, player) == 0 || (controls.getButtonHeldLength(controls.LEFT, player) >= (gameUpdateSpeed / 5) && controls.getButtonHeldLength(controls.LEFT, player) % 5 == 0)){
+            if (controls.getButtonHeldLength(controls.LEFT, player) == 0
+                    || (controls.getButtonHeldLength(controls.LEFT, player) >= (gameUpdateSpeed / 5)
+                            && controls.getButtonHeldLength(controls.LEFT, player) % 5 == 0)) {
                 currentPiece.move(-1, 0);
             }
-            controls.setButtonHeldLength(controls.LEFT, controls.getButtonHeldLength(controls.LEFT, player) + 1, player);
-        }
-        else{
+            controls.setButtonHeldLength(controls.LEFT, controls.getButtonHeldLength(controls.LEFT, player) + 1,
+                    player);
+        } else {
             controls.setButtonHeldLength(controls.LEFT, 0, player);
         }
-    // right, moves piece right
-        if(controls.getButtonStatus(player)[controls.RIGHT]) {
+        // right, moves piece right
+        if (controls.getButtonStatus(player)[controls.RIGHT]) {
             // DAS (delayed auto shift)
-            if(controls.getButtonHeldLength(controls.RIGHT, player) == 0 || (controls.getButtonHeldLength(controls.RIGHT, player) >= (gameUpdateSpeed / 5) && controls.getButtonHeldLength(controls.RIGHT, player) % 5 == 0)){
+            if (controls.getButtonHeldLength(controls.RIGHT, player) == 0
+                    || (controls.getButtonHeldLength(controls.RIGHT, player) >= (gameUpdateSpeed / 5)
+                            && controls.getButtonHeldLength(controls.RIGHT, player) % 5 == 0)) {
                 currentPiece.move(1, 0);
             }
-            controls.setButtonHeldLength(controls.RIGHT, controls.getButtonHeldLength(controls.RIGHT, player) + 1, player);
-        }
-        else{
+            controls.setButtonHeldLength(controls.RIGHT, controls.getButtonHeldLength(controls.RIGHT, player) + 1,
+                    player);
+        } else {
             controls.setButtonHeldLength(controls.RIGHT, 0, player);
         }
-    // down, moves piece down (soft drop)
-        if(controls.getButtonStatus(player)[controls.DOWN]) {
+        // down, moves piece down (soft drop)
+        if (controls.getButtonStatus(player)[controls.DOWN]) {
             // If down is pressed, and it can move down, it moves down
             // If it can't, add to gravity success to speed up adding it to the board
-            if(controls.getButtonHeldLength(controls.DOWN, player) == 0 || (controls.getButtonHeldLength(controls.DOWN, player) >= (gameUpdateSpeed / 4) && controls.getButtonHeldLength(controls.DOWN, player) % 4 == 0)){
+            if (controls.getButtonHeldLength(controls.DOWN, player) == 0
+                    || (controls.getButtonHeldLength(controls.DOWN, player) >= (gameUpdateSpeed / 4)
+                            && controls.getButtonHeldLength(controls.DOWN, player) % 4 == 0)) {
                 if (!currentPiece.move(0, 1)) {
-                    //if (currentPiece.gravitySuccess(false)) {
-                    //    currentPiece.addToBoard(board);
-                    //    spawnTetromino();
-                    //}
+                    // if (currentPiece.gravitySuccess(false)) {
+                    // currentPiece.addToBoard(board);
+                    // spawnTetromino();
+                    // }
                 }
             }
-            controls.setButtonHeldLength(controls.DOWN, controls.getButtonHeldLength(controls.DOWN, player) + 1, player);  
-        }
-        else{
+            controls.setButtonHeldLength(controls.DOWN, controls.getButtonHeldLength(controls.DOWN, player) + 1,
+                    player);
+        } else {
             controls.setButtonHeldLength(controls.DOWN, 0, player);
         }
-    // B, rotates the piece clockwise
-        if(controls.getButtonStatus(player)[controls.B]) {
-            if(controls.getButtonHeldLength(controls.B, player) == 0 || (controls.getButtonHeldLength(controls.B, player) >= (gameUpdateSpeed / 2) && controls.getButtonHeldLength(controls.B, player) % 12 == 0)){
+        // B, rotates the piece clockwise
+        if (controls.getButtonStatus(player)[controls.B]) {
+            if (controls.getButtonHeldLength(controls.B, player) == 0
+                    || (controls.getButtonHeldLength(controls.B, player) >= (gameUpdateSpeed / 2)
+                            && controls.getButtonHeldLength(controls.B, player) % 12 == 0)) {
                 currentPiece.rotate(true);
             }
-            controls.setButtonHeldLength(controls.B, controls.getButtonHeldLength(controls.B, player) + 1, player); 
-        }
-        else{
+            controls.setButtonHeldLength(controls.B, controls.getButtonHeldLength(controls.B, player) + 1, player);
+        } else {
             controls.setButtonHeldLength(controls.B, 0, player);
         }
-    // A, rotates the piece counter clockwise
-        if(controls.getButtonStatus(player)[controls.A]) {
-            if(controls.getButtonHeldLength(controls.A, player) == 0 || (controls.getButtonHeldLength(controls.A, player) >= (gameUpdateSpeed / 2) && controls.getButtonHeldLength(controls.A, player) % 12 == 0)){
+        // A, rotates the piece counter clockwise
+        if (controls.getButtonStatus(player)[controls.A]) {
+            if (controls.getButtonHeldLength(controls.A, player) == 0
+                    || (controls.getButtonHeldLength(controls.A, player) >= (gameUpdateSpeed / 2)
+                            && controls.getButtonHeldLength(controls.A, player) % 12 == 0)) {
                 currentPiece.rotate(false);
             }
-            controls.setButtonHeldLength(controls.A, controls.getButtonHeldLength(controls.A, player) + 1, player); 
-        }
-        else{
+            controls.setButtonHeldLength(controls.A, controls.getButtonHeldLength(controls.A, player) + 1, player);
+        } else {
             controls.setButtonHeldLength(controls.A, 0, player);
         }
-    // UP, hard drops the piece
-        if(controls.getButtonStatus(player)[controls.UP]) {
-            if(controls.getButtonHeldLength(controls.UP, player) == 0){
+        // UP, hard drops the piece
+        if (controls.getButtonStatus(player)[controls.UP]) {
+            if (controls.getButtonHeldLength(controls.UP, player) == 0) {
                 currentPiece.hardDrop();
                 currentPiece.addToBoard(board);
                 spawnTetromino();
             }
-            controls.setButtonHeldLength(controls.UP, controls.getButtonHeldLength(controls.UP, player) + 1, player); 
-        }
-        else{
+            controls.setButtonHeldLength(controls.UP, controls.getButtonHeldLength(controls.UP, player) + 1, player);
+        } else {
             controls.setButtonHeldLength(controls.UP, 0, player);
         }
-    // SHOULDER, holds the current given piece
-        if(controls.getButtonStatus(player)[controls.SHOULDER]) {
-            if(controls.getButtonHeldLength(controls.SHOULDER, player) == 0){
+        // SHOULDER, holds the current given piece
+        if (controls.getButtonStatus(player)[controls.SHOULDER]) {
+            if (controls.getButtonHeldLength(controls.SHOULDER, player) == 0) {
                 holdTetromino();
             }
-            controls.setButtonHeldLength(controls.SHOULDER, controls.getButtonHeldLength(controls.SHOULDER, player) + 1, player); 
-        }
-        else{
+            controls.setButtonHeldLength(controls.SHOULDER, controls.getButtonHeldLength(controls.SHOULDER, player) + 1,
+                    player);
+        } else {
             controls.setButtonHeldLength(controls.SHOULDER, 0, player);
         }
     }// end controls
 
-    private void handlePausing(){
+    private void handlePausing() {
         // START, handles pausing
-        if(controls.getButtonStatus(player)[controls.START]) {
-            if(controls.getButtonHeldLength(controls.START, player) == 0){
+        if (controls.getButtonStatus(player)[controls.START]) {
+            if (controls.getButtonHeldLength(controls.START, player) == 0) {
                 frame.pause(true);
             }
-            controls.setButtonHeldLength(controls.START, controls.getButtonHeldLength(controls.START, player) + 1, player); 
-        }
-        else{
+            controls.setButtonHeldLength(controls.START, controls.getButtonHeldLength(controls.START, player) + 1,
+                    player);
+        } else {
             controls.setButtonHeldLength(controls.START, 0, player);
         }
     }
@@ -183,7 +204,7 @@ public class TetrisLogic {
 
         // Starts the movement of time. keyframe duration of 120 hz should update every
         // 8.33 ms
-        System.out.println((Math.round((1.00 / gameUpdateSpeed) * 100000)) / 100.00);
+        // System.out.println((Math.round((1.00 / gameUpdateSpeed) * 100000)) / 100.00);
         timeline = new Timeline(
                 new KeyFrame(Duration.millis((Math.round((1.00 / gameUpdateSpeed) * 100000)) / 100.00), e -> update()));
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -196,12 +217,13 @@ public class TetrisLogic {
     // Called every "tick". Handles piece gravity and adding to the board.
     private void update() {
         handlePausing();
-        if(frame.getPaused()){
+        if (frame.getPaused()) {
             controls.updateControls(player);
             return;
         }
 
-        // TODO remove this. it doesnt belong here but it definitely ensures that the screen is the right size always.
+        // TODO remove this. it doesnt belong here but it definitely ensures that the
+        // screen is the right size always.
         frame.onResize();
 
         clearLines();
@@ -232,67 +254,66 @@ public class TetrisLogic {
             incrementorDrawFrames++;
         }
 
-        handleControls(); 
+        handleControls();
         controls.updateControls(player);
-        
+
     }
 
     // Stores the current piece in held tetromino, and vise versa
-    private void holdTetromino(){
-        if(heldPieceCalled == 0){
+    private void holdTetromino() {
+        if (heldPieceCalled == 0) {
             // if held piece is empty, hold it and spawn a new one
-        if(heldPiece == 0){
-            heldPiece = currentPiece.colorBoard;
-            heldPieceCalled++;
-            spawnTetromino();
-        }
-        else{
-            int temp;
-            temp = currentPiece.colorBoard;
-            // create the correspondingf tetromino from the queue value
-            switch (heldPiece) {
-                case 1:
-                    // Create I Piece
-                    currentPiece = tetrominoIFactory.createTetromino(board);
-                    break;
-                case 2:
-                    // Create O Piece
-                    currentPiece = tetrominoOFactory.createTetromino(board);
-                    break;
-                case 3:
-                    // Create T Piece
-                    currentPiece = tetrominoTFactory.createTetromino(board);
-                    break;
-                case 4:
-                    // Create S Piece
-                    currentPiece = tetrominoSFactory.createTetromino(board);
-                    break;
-                case 5:
-                    // Create Z Piece
-                    currentPiece = tetrominoZFactory.createTetromino(board);
-                    break;
-                case 6:
-                    // Create J Piece
-                    currentPiece = tetrominoJFactory.createTetromino(board);
-                    break;
-                case 7:
-                    // Create L Piece
-                    currentPiece = tetrominoLFactory.createTetromino(board);
-                    break;
-                default:
-                    // Should absolutely never happen. but if it does, give em an I.
-                    currentPiece = tetrominoIFactory.createTetromino(board);
-                    break;
-            }
-            heldPiece = temp;
+            if (heldPiece == 0) {
+                heldPiece = currentPiece.colorBoard;
+                heldPieceCalled++;
+                spawnTetromino();
+            } else {
+                int temp;
+                temp = currentPiece.colorBoard;
+                // create the correspondingf tetromino from the queue value
+                switch (heldPiece) {
+                    case 1:
+                        // Create I Piece
+                        currentPiece = tetrominoIFactory.createTetromino(board);
+                        break;
+                    case 2:
+                        // Create O Piece
+                        currentPiece = tetrominoOFactory.createTetromino(board);
+                        break;
+                    case 3:
+                        // Create T Piece
+                        currentPiece = tetrominoTFactory.createTetromino(board);
+                        break;
+                    case 4:
+                        // Create S Piece
+                        currentPiece = tetrominoSFactory.createTetromino(board);
+                        break;
+                    case 5:
+                        // Create Z Piece
+                        currentPiece = tetrominoZFactory.createTetromino(board);
+                        break;
+                    case 6:
+                        // Create J Piece
+                        currentPiece = tetrominoJFactory.createTetromino(board);
+                        break;
+                    case 7:
+                        // Create L Piece
+                        currentPiece = tetrominoLFactory.createTetromino(board);
+                        break;
+                    default:
+                        // Should absolutely never happen. but if it does, give em an I.
+                        currentPiece = tetrominoIFactory.createTetromino(board);
+                        break;
+                }
+                heldPiece = temp;
 
-        }
-        // Set to true
-        heldPieceCalled++;
+            }
+            // Set to true
+            heldPieceCalled++;
         }
     }
 
-    public int getHeldPiece(){
+    public int getHeldPiece() {
         return heldPiece;
     }
 
@@ -343,7 +364,7 @@ public class TetrisLogic {
         }
         frame.drawNextTetromino(this);
         // New piece spawned, it is now ok for the player to hold again
-        if(heldPieceCalled > 0){
+        if (heldPieceCalled > 0) {
             heldPieceCalled--;
         }
     }
@@ -375,13 +396,13 @@ public class TetrisLogic {
         // Clears the board
         gc.setFill(Color.GRAY);
         gc.fillRect(0, 0, TetrisFrame.WIDTH * frame.TILE_SIZE, TetrisFrame.HEIGHT * frame.TILE_SIZE);
-        //Draw the background 
+        // Draw the background
         gc.setStroke(Color.GRAY); // Set the color of the tiling
         gc.setFill(Color.BLACK);
         for (int x = 0; x < TetrisFrame.WIDTH; x++) {
             for (int y = 0; y < TetrisFrame.HEIGHT; y++) {
                 gc.fillRect(x * frame.TILE_SIZE + 2, y * frame.TILE_SIZE + 2, frame.TILE_SIZE - 2,
-                            frame.TILE_SIZE - 2);
+                        frame.TILE_SIZE - 2);
                 gc.strokeRect(x * frame.TILE_SIZE + 2, y * frame.TILE_SIZE + 2, frame.TILE_SIZE - 2,
                         frame.TILE_SIZE - 2);
             }
@@ -427,7 +448,8 @@ public class TetrisLogic {
                             curColor = Color.GRAY;
                             break;
                     }
-                    LinearGradient gradient = new LinearGradient(0, 1, 1, 0, true,  CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, curColor.darker()), new Stop(1, curColor) });
+                    LinearGradient gradient = new LinearGradient(0, 1, 1, 0, true, CycleMethod.NO_CYCLE,
+                            new Stop[] { new Stop(0, curColor.darker()), new Stop(1, curColor) });
                     gc.setFill(gradient); // Set the color of the Tetromino
                     gc.setStroke(Color.WHITE);
                     gc.fillRect(x * frame.TILE_SIZE + 2, y * frame.TILE_SIZE + 2, frame.TILE_SIZE - 2,
@@ -443,6 +465,7 @@ public class TetrisLogic {
     // Checks if any lines are filled. if so, remove them and push the rows above it
     // down
     private void clearLines() {
+        int clearedLines = 0;
         // Iterate over the board
         for (int y = TetrisFrame.HEIGHT - 1; y >= 0; y--) {
             boolean lineIsFull = true;
@@ -455,6 +478,8 @@ public class TetrisLogic {
             }
             // If it made it this far, line is full. Wipe it.
             if (lineIsFull) {
+                clearedLines++;
+                totalLinesCleared++;
                 // for loop starting at the current position where the line to remove is
                 for (int newY = y; newY > 0; newY--) {
                     for (int x = 0; x < TetrisFrame.WIDTH; x++) {
@@ -468,6 +493,27 @@ public class TetrisLogic {
                 // Continue the iteration over the board
                 y++;
             }
+        }
+        if (clearedLines == 1) {
+            scoreManager.increaseScore(
+                    800 * Integer.parseInt(Integer.toString(levelManager.getLevelProperty().getValue())));
+            System.out.println(scoreManager.getScoreProperty().getValue());
+        } else if (clearedLines == 2) {
+            scoreManager.increaseScore(
+                    1200 * Integer.parseInt(Integer.toString(levelManager.getLevelProperty().getValue())));
+            System.out.println(scoreManager.getScoreProperty().getValue());
+        } else if (clearedLines == 3) {
+            scoreManager.increaseScore(
+                    1800 * Integer.parseInt(Integer.toString(levelManager.getLevelProperty().getValue())));
+            System.out.println(scoreManager.getScoreProperty().getValue());
+        } else if (clearedLines == 4) {
+            scoreManager.increaseScore(
+                    2000 * Integer.parseInt(Integer.toString(levelManager.getLevelProperty().getValue())));
+            System.out.println(scoreManager.getScoreProperty().getValue());
+        } else if (totalLinesCleared >= 10) {
+            levelManager.incrementLevel();
+            System.out.println(levelManager.getLevelProperty().getValue());
+            totalLinesCleared = 0;
         }
     }
 }

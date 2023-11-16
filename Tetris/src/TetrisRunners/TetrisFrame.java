@@ -1,6 +1,11 @@
 package TetrisRunners;
 
 import TetrisHelper.Tetrominos.*;
+
+import java.util.logging.Level;
+
+import Leveling.LevelManager;
+import Leveling.ScoreManager;
 import TetrisHelper.Factories.*;
 
 import javafx.event.ActionEvent;
@@ -19,6 +24,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class TetrisFrame {
@@ -40,10 +46,9 @@ public class TetrisFrame {
     private Canvas heldCanvas;
     private GraphicsContext heldGC;
 
-    //Store a frame that may contain the other player. possibly
+    // Store a frame that may contain the other player. possibly
     private TetrisFrame otherTetrisFrame;
     private Stage secondStage;
-    
 
     private Stage stage;
     private Scene scene;
@@ -51,6 +56,9 @@ public class TetrisFrame {
     private Rectangle canvasBorder;
     private VBox rightBox;
     private VBox leftBox;
+
+    private ScoreManager scoreManager = new ScoreManager();
+    private LevelManager levelManager = new LevelManager();
 
     private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
             tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
@@ -65,10 +73,10 @@ public class TetrisFrame {
     private Tetromino nextPiece;
     private Tetromino heldPiece;
 
-    public TetrisFrame(Stage stage, int player, TetrisFrame firstPlayerFrame){
+    public TetrisFrame(Stage stage, int player, TetrisFrame firstPlayerFrame) {
         this(stage, player);
         otherTetrisFrame = firstPlayerFrame;
-        }
+    }
 
     // Constructor. creates all the display elements other things will use
     public TetrisFrame(Stage stage, int player) {
@@ -80,7 +88,7 @@ public class TetrisFrame {
         stage.setTitle("OOP Tetris: Player " + player);
         stage.getIcons().add(new Image("/icon.png"));
 
-        if(player == 1){
+        if (player == 1) {
             stage.setMaximized(true);
         }
 
@@ -93,38 +101,50 @@ public class TetrisFrame {
         canvasBorder.setStroke(Color.BLUE);
         canvasContainer.getChildren().addAll(canvas, canvasBorder);
 
-        rightCanvas = new Canvas(TILE_SIZE * WIDTH / 2, TILE_SIZE * WIDTH / 2); //canvas for the next piece
+        rightCanvas = new Canvas(TILE_SIZE * WIDTH / 2, TILE_SIZE * WIDTH / 2); // canvas for the next piece
 
-        heldCanvas = new Canvas(TILE_SIZE * WIDTH / 2, TILE_SIZE * WIDTH / 2); //canvas for the held piece
-
-        
+        heldCanvas = new Canvas(TILE_SIZE * WIDTH / 2, TILE_SIZE * WIDTH / 2); // canvas for the held piece
 
         // Create a border pane to hold the canvas and additional elements
         borderPane = new BorderPane();
         borderPane.setCenter(canvasContainer);
-        //borderPane.setStyle("-fx-background-color: #E0E0E0;"); // Background color
-        
+        // borderPane.setStyle("-fx-background-color: #E0E0E0;"); // Background color
 
         // Create a VBox, Will display things that aren't the game
         leftBox = new VBox(8);
         leftBox.setStyle("-fx-background-color: #E0E0E0;"); // Background color
         leftBox.setPrefWidth(200); // Minimum width of the area. will grow with objects if needed
 
-        // Create a VBox, displays next piece and score, and held piece
+        // Text boxes for level and score
+        Text level = new Text();
+        Text score = new Text();
+
+        // Binds level property to level
+        levelManager.getLevelProperty().addListener(ov -> {
+            level.setText(Integer.toString(levelManager.getLevelProperty().getValue()));
+        });
+
+        // Binds score property to score
+        scoreManager.getScoreProperty().addListener(ov -> {
+            score.setText(Integer.toString(scoreManager.getScoreProperty().getValue()));
+        });
+
+        // Create a VBox, displays next piece, score, level, and held piece
         rightBox = new VBox(8);
         rightBox.setStyle("-fx-background-color: #E0E0E0;"); // Background color
         rightBox.setPrefWidth(200); // Minimum width of the area. will grow with objects if needed
-        rightBox.getChildren().addAll(new Label("Next piece:"), rightCanvas, new Label("Held piece:"), heldCanvas); // add canvas to draw next piece on and
-                                                                              // text
-                                                                              // box to label
-                                                                              
+        rightBox.getChildren().addAll(new Label("Next piece:"), rightCanvas, new Label("Held piece:"),
+                heldCanvas, new Label("Level:"), level, new Label("Score:"), score); // add canvas to draw next piece on
+                                                                                     // and text box to label
+        canvasContainer.requestFocus();
+
         // Add an image to the box
         Image logoImage = new Image("/Logo.jpg");
         ImageView logoImageView = new ImageView(logoImage);
         leftBox.getChildren().add(logoImageView);
 
         // give the start and options buttons only to the first player
-        if(player == 1){
+        if (player == 1) {
             // Create a button and set its label
             Button startButton = new Button("Start Game");
             startButton.setPrefHeight(30);
@@ -162,9 +182,9 @@ public class TetrisFrame {
                     // make 2nds player stage
                     secondStage = new Stage();
                     // sets it to the right side of the screen
-                    secondStage.setX(screenWidth/2);
+                    secondStage.setX(screenWidth / 2);
                     secondStage.setY(0);
-                    secondStage.setWidth(screenWidth/2);
+                    secondStage.setWidth(screenWidth / 2);
                     secondStage.setHeight(screenHeight);
                     otherTetrisFrame = new TetrisFrame(secondStage, 2, this);
                     secondStage.show();
@@ -178,7 +198,6 @@ public class TetrisFrame {
             // Add the button to the left VBox
             leftBox.getChildren().addAll(startButton, enableSecondPlayerBox);
         }
-        
 
         // add the box to the pane
         borderPane.setLeft(leftBox);
@@ -194,7 +213,6 @@ public class TetrisFrame {
 
         // Show the stage
         stage.show();
-        
 
         // Handle screen resizes
         scene.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -212,14 +230,14 @@ public class TetrisFrame {
         canvas.requestFocus();
     }
 
-    public void onResize(){
-        if(borderPane.getCenter().getLayoutBounds().getHeight() / HEIGHT < borderPane.getCenter().getLayoutBounds().getWidth() / WIDTH){
+    public void onResize() {
+        if (borderPane.getCenter().getLayoutBounds().getHeight()
+                / HEIGHT < borderPane.getCenter().getLayoutBounds().getWidth() / WIDTH) {
             TILE_SIZE = borderPane.getCenter().getLayoutBounds().getHeight() / HEIGHT;
-        }
-        else{
+        } else {
             TILE_SIZE = borderPane.getCenter().getLayoutBounds().getWidth() / WIDTH;
         }
-        System.out.println(TILE_SIZE);
+        // System.out.println(TILE_SIZE);
         canvas.setHeight(HEIGHT * TILE_SIZE);
         canvas.setWidth(WIDTH * TILE_SIZE);
         heldCanvas.setHeight(TILE_SIZE * WIDTH / 2);
@@ -232,7 +250,7 @@ public class TetrisFrame {
 
         rightBox.setMaxWidth(TILE_SIZE * 4);
 
-        if(logic != null){
+        if (logic != null) {
             drawHeldTetromino(logic);
             drawNextTetromino(logic);
         }
@@ -240,32 +258,30 @@ public class TetrisFrame {
 
     private void startGame() {
         // Start the game logic
-        if(player == 1 && otherTetrisFrame != null){
+        if (player == 1 && otherTetrisFrame != null) {
             logic = new TetrisLogic(scene, gc, this, player);
             otherTetrisFrame.startGame();
             onResize();
-        }
-        else if (player == 2){
+        } else if (player == 2) {
+            logic = new TetrisLogic(scene, gc, this, player);
+            onResize();
+        } else {
             logic = new TetrisLogic(scene, gc, this, player);
             onResize();
         }
-        else{
-            logic = new TetrisLogic(scene, gc, this, player);
-            onResize();
-        }
-        
+
     }
 
-    public boolean getPaused(){
+    public boolean getPaused() {
         return paused;
     }
 
-    public void pause(boolean initiated){
-        if(initiated && otherTetrisFrame != null){
+    public void pause(boolean initiated) {
+        if (initiated && otherTetrisFrame != null) {
             otherTetrisFrame.pause(false);
         }
-        if(!paused){
-            //logic.timeline.pause();
+        if (!paused) {
+            // logic.timeline.pause();
             gc.drawImage(new Image("/pause.png"), 0, 0, canvas.getWidth(), canvas.getWidth());
         }
         paused = !paused;
@@ -364,7 +380,7 @@ public class TetrisFrame {
                 break;
         }
 
-        if(heldPiece != null){
+        if (heldPiece != null) {
             heldPiece.setX(1);
             heldPiece.setY(1);
             // Clear previous "held-piece"
@@ -372,6 +388,6 @@ public class TetrisFrame {
             // Draws next piece to held VBox
             heldPiece.draw(heldGC, this);
         }
-        
+
     }
 }
