@@ -1,20 +1,17 @@
 package Leveling;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-
 public class ScoreManager {
-    private IntegerProperty scoreProperty = new SimpleIntegerProperty();
+    private int score;
 
     public ScoreManager() {
-        scoreProperty.setValue(0);
+        score = 0;
     }
 
-    public IntegerProperty getScoreProperty() {
-        return scoreProperty;
+    public int getScore() {
+        return score;
     }
 
     public void increaseScore(int increase) {
-        scoreProperty.setValue(scoreProperty.getValue() + increase);
+        score += increase;
     }
 }

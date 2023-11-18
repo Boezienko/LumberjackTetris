@@ -12,6 +12,7 @@ import TetrisHelper.Controls;
 import TetrisHelper.Factories.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.IntegerProperty;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
@@ -36,10 +37,10 @@ public class TetrisLogic {
             tetrominoJFactory = new Tetromino_JFactory(), tetrominoZFactory = new Tetromino_ZFactory();
 
     // Instance of LevelManager to allow incrementing level
-    private LevelManager levelManager;
+    public static LevelManager levelManager = new LevelManager();
 
     // Instance of LevelManager to allow incrementing score
-    private ScoreManager scoreManager;
+    public static ScoreManager scoreManager = new ScoreManager();
 
     // queue that holds the current pieces for the 7 bag
     private Queue<Integer> tetrominoQueue = new LinkedList<>();
@@ -496,24 +497,34 @@ public class TetrisLogic {
         }
         if (clearedLines == 1) {
             scoreManager.increaseScore(
-                    800 * Integer.parseInt(Integer.toString(levelManager.getLevelProperty().getValue())));
-            System.out.println(scoreManager.getScoreProperty().getValue());
+                    800 * levelManager.getLevel());
+            System.out.println(scoreManager.getScore());
         } else if (clearedLines == 2) {
             scoreManager.increaseScore(
-                    1200 * Integer.parseInt(Integer.toString(levelManager.getLevelProperty().getValue())));
-            System.out.println(scoreManager.getScoreProperty().getValue());
+                    1200 * levelManager.getLevel());
+            System.out.println(scoreManager.getScore());
         } else if (clearedLines == 3) {
             scoreManager.increaseScore(
-                    1800 * Integer.parseInt(Integer.toString(levelManager.getLevelProperty().getValue())));
-            System.out.println(scoreManager.getScoreProperty().getValue());
+                    1800 * levelManager.getLevel());
+            System.out.println(scoreManager.getScore());
         } else if (clearedLines == 4) {
             scoreManager.increaseScore(
-                    2000 * Integer.parseInt(Integer.toString(levelManager.getLevelProperty().getValue())));
-            System.out.println(scoreManager.getScoreProperty().getValue());
+                    2000 * levelManager.getLevel());
+            System.out.println(scoreManager.getScore());
         } else if (totalLinesCleared >= 10) {
             levelManager.incrementLevel();
-            System.out.println(levelManager.getLevelProperty().getValue());
+            System.out.println(levelManager.getLevel());
             totalLinesCleared = 0;
         }
+        frame.drawLevel(this);
+        frame.drawScore(this);
+    }
+
+    public ScoreManager getScoreManager() {
+        return scoreManager;
+    }
+
+    public LevelManager getLevelManager() {
+        return levelManager;
     }
 }

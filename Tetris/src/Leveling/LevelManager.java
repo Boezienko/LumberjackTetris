@@ -1,20 +1,17 @@
 package Leveling;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-
 public class LevelManager {
-    private IntegerProperty levelProperty = new SimpleIntegerProperty();
+    private int level;
 
     public LevelManager() {
-        levelProperty.setValue(1);
+        level = 1;
     }
 
-    public IntegerProperty getLevelProperty() {
-        return levelProperty;
+    public int getLevel() {
+        return level;
     }
 
     public void incrementLevel() {
-        levelProperty.setValue(levelProperty.getValue() + 1);
+        level++;
     }
 }

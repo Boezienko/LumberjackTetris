@@ -24,6 +24,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -45,6 +47,12 @@ public class TetrisFrame {
     // held piece canvas
     private Canvas heldCanvas;
     private GraphicsContext heldGC;
+    // level canvas
+    private Canvas levelCanvas;
+    private GraphicsContext levelGC;
+    // score canvas
+    private Canvas scoreCanvas;
+    private GraphicsContext scoreGC;
 
     // Store a frame that may contain the other player. possibly
     private TetrisFrame otherTetrisFrame;
@@ -56,9 +64,6 @@ public class TetrisFrame {
     private Rectangle canvasBorder;
     private VBox rightBox;
     private VBox leftBox;
-
-    private ScoreManager scoreManager = new ScoreManager();
-    private LevelManager levelManager = new LevelManager();
 
     private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
             tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
@@ -105,6 +110,10 @@ public class TetrisFrame {
 
         heldCanvas = new Canvas(TILE_SIZE * WIDTH / 2, TILE_SIZE * WIDTH / 2); // canvas for the held piece
 
+        levelCanvas = new Canvas(50, 50); // canvas for level
+
+        scoreCanvas = new Canvas(50, 50); // canvas for score
+
         // Create a border pane to hold the canvas and additional elements
         borderPane = new BorderPane();
         borderPane.setCenter(canvasContainer);
@@ -115,28 +124,14 @@ public class TetrisFrame {
         leftBox.setStyle("-fx-background-color: #E0E0E0;"); // Background color
         leftBox.setPrefWidth(200); // Minimum width of the area. will grow with objects if needed
 
-        // Text boxes for level and score
-        Text level = new Text();
-        Text score = new Text();
-
-        // Binds level property to level
-        levelManager.getLevelProperty().addListener(ov -> {
-            level.setText(Integer.toString(levelManager.getLevelProperty().getValue()));
-        });
-
-        // Binds score property to score
-        scoreManager.getScoreProperty().addListener(ov -> {
-            score.setText(Integer.toString(scoreManager.getScoreProperty().getValue()));
-        });
-
         // Create a VBox, displays next piece, score, level, and held piece
         rightBox = new VBox(8);
         rightBox.setStyle("-fx-background-color: #E0E0E0;"); // Background color
         rightBox.setPrefWidth(200); // Minimum width of the area. will grow with objects if needed
         rightBox.getChildren().addAll(new Label("Next piece:"), rightCanvas, new Label("Held piece:"),
-                heldCanvas, new Label("Level:"), level, new Label("Score:"), score); // add canvas to draw next piece on
-                                                                                     // and text box to label
-        canvasContainer.requestFocus();
+                heldCanvas, new Label("Level: "), levelCanvas, new Label("Score:"), scoreCanvas); // add canvas to draw
+                                                                                                  // next piece on
+        // and text box to label
 
         // Add an image to the box
         Image logoImage = new Image("/Logo.jpg");
@@ -253,6 +248,8 @@ public class TetrisFrame {
         if (logic != null) {
             drawHeldTetromino(logic);
             drawNextTetromino(logic);
+            drawLevel(logic);
+            drawScore(logic);
         }
     }
 
@@ -389,5 +386,23 @@ public class TetrisFrame {
             heldPiece.draw(heldGC, this);
         }
 
+    }
+
+    public void drawLevel(TetrisLogic logic) {
+        levelGC = levelCanvas.getGraphicsContext2D();
+        // levelGC.clearRect(0, 0, levelCanvas.getWidth(), levelCanvas.getHeight());
+        // levelGC.fillText("text", 0, 0);
+        levelGC.clearRect(0, 0, 50, 50);
+        levelGC.setFont(Font.font("Courier New", FontWeight.LIGHT, 15));
+        levelGC.strokeText("" + logic.getLevelManager().getLevel(), 10, 10);
+    }
+
+    public void drawScore(TetrisLogic logic) {
+        scoreGC = scoreCanvas.getGraphicsContext2D();
+        // scoreGC.clearRect(0, 0, scoreCanvas.getWidth(), scoreCanvas.getHeight());
+        // scoreGC.fillText("text", 0, 0);
+        scoreGC.clearRect(0, 0, 50, 50);
+        scoreGC.setFont(Font.font("Courier New", FontWeight.LIGHT, 15));
+        scoreGC.strokeText("" + logic.getScoreManager().getScore(), 10, 10);
     }
 }
