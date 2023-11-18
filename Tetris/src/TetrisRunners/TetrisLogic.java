@@ -166,6 +166,7 @@ public class TetrisLogic {
         // UP, hard drops the piece
         if (controls.getButtonStatus(player)[controls.UP]) {
             if (controls.getButtonHeldLength(controls.UP, player) == 0) {
+                scoreManager.increaseScore(10); // points earned for hard drop
                 currentPiece.hardDrop();
                 currentPiece.addToBoard(board);
                 spawnTetromino();
@@ -496,34 +497,28 @@ public class TetrisLogic {
             }
         }
         if (clearedLines == 1) {
-            scoreManager.increaseScore(
-                    800 * levelManager.getLevel());
-            System.out.println(scoreManager.getScore());
+            scoreManager.increaseScore(800 * levelManager.getLevel());
         } else if (clearedLines == 2) {
-            scoreManager.increaseScore(
-                    1200 * levelManager.getLevel());
-            System.out.println(scoreManager.getScore());
+            scoreManager.increaseScore(1200 * levelManager.getLevel());
         } else if (clearedLines == 3) {
-            scoreManager.increaseScore(
-                    1800 * levelManager.getLevel());
-            System.out.println(scoreManager.getScore());
+            scoreManager.increaseScore(1800 * levelManager.getLevel());
         } else if (clearedLines == 4) {
-            scoreManager.increaseScore(
-                    2000 * levelManager.getLevel());
-            System.out.println(scoreManager.getScore());
-        } else if (totalLinesCleared >= 10) {
+            scoreManager.increaseScore(2000 * levelManager.getLevel());
+        }
+        if (totalLinesCleared >= 10) {
             levelManager.incrementLevel();
-            System.out.println(levelManager.getLevel());
             totalLinesCleared = 0;
         }
         frame.drawLevel(this);
         frame.drawScore(this);
     }
 
+    // allows score to be retrieved on TetrisFrame
     public ScoreManager getScoreManager() {
         return scoreManager;
     }
 
+    // allows level to be retrieved on TetrisFrame
     public LevelManager getLevelManager() {
         return levelManager;
     }
