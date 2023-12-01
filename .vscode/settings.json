@@ -1,13 +1,14 @@
 {
   "java.project.referencedLibraries": [
     "lib/**/*.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.base.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.controls.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.fxml.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.graphics.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.media.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.swing.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.web.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx-swt.jar"
+    "c:\\Users\\boeaz\\Documents\\CourseWork\\ObjectOrientedProgrammingMethods\\javafx-sdk-20.0.2\\lib\\javafx.base.jar",
+    "c:\\Users\\boeaz\\Documents\\CourseWork\\ObjectOrientedProgrammingMethods\\javafx-sdk-20.0.2\\lib\\javafx.controls.jar",
+    "c:\\Users\\boeaz\\Documents\\CourseWork\\ObjectOrientedProgrammingMethods\\javafx-sdk-20.0.2\\lib\\javafx.fxml.jar",
+    "c:\\Users\\boeaz\\Documents\\CourseWork\\ObjectOrientedProgrammingMethods\\javafx-sdk-20.0.2\\lib\\javafx.graphics.jar",
+    "c:\\Users\\boeaz\\Documents\\CourseWork\\ObjectOrientedProgrammingMethods\\javafx-sdk-20.0.2\\lib\\javafx.media.jar",
+    "c:\\Users\\boeaz\\Documents\\CourseWork\\ObjectOrientedProgrammingMethods\\javafx-sdk-20.0.2\\lib\\javafx.swing.jar",
+    "c:\\Users\\boeaz\\Documents\\CourseWork\\ObjectOrientedProgrammingMethods\\javafx-sdk-20.0.2\\lib\\javafx.web.jar",
+    "c:\\Users\\boeaz\\Documents\\CourseWork\\ObjectOrientedProgrammingMethods\\javafx-sdk-20.0.2\\lib\\javafx-swt.jar",
+    "Tetris/lib/Jamepad.jar"
   ]
 }
