@@ -173,7 +173,7 @@ public class Controls {
             }
 
         } catch (ControllerUnpluggedException e) {
-            System.out.println("controller unplugged");
+            // System.out.println("controller unplugged");
         }
 
     }

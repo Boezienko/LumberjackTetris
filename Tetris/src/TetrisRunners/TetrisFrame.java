@@ -390,18 +390,14 @@ public class TetrisFrame {
 
     public void drawLevel(TetrisLogic logic) {
         levelGC = levelCanvas.getGraphicsContext2D();
-        // levelGC.clearRect(0, 0, levelCanvas.getWidth(), levelCanvas.getHeight());
-        // levelGC.fillText("text", 0, 0);
-        levelGC.clearRect(0, 0, 50, 50);
+        levelGC.clearRect(0, 0, 75, 50);
         levelGC.setFont(Font.font("Courier New", FontWeight.LIGHT, 15));
         levelGC.strokeText("" + logic.getLevelManager().getLevel(), 10, 10);
     }
 
     public void drawScore(TetrisLogic logic) {
         scoreGC = scoreCanvas.getGraphicsContext2D();
-        // scoreGC.clearRect(0, 0, scoreCanvas.getWidth(), scoreCanvas.getHeight());
-        // scoreGC.fillText("text", 0, 0);
-        scoreGC.clearRect(0, 0, 50, 50);
+        scoreGC.clearRect(0, 0, 100, 50);
         scoreGC.setFont(Font.font("Courier New", FontWeight.LIGHT, 15));
         scoreGC.strokeText("" + logic.getScoreManager().getScore(), 10, 10);
     }

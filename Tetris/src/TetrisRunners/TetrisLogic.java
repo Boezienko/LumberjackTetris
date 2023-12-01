@@ -467,6 +467,7 @@ public class TetrisLogic {
     // Checks if any lines are filled. if so, remove them and push the rows above it
     // down
     private void clearLines() {
+        // TODO make multiplayer scoring work
         int clearedLines = 0;
         // Iterate over the board
         for (int y = TetrisFrame.HEIGHT - 1; y >= 0; y--) {
@@ -498,12 +499,16 @@ public class TetrisLogic {
         }
         if (clearedLines == 1) {
             scoreManager.increaseScore(800 * levelManager.getLevel());
+            System.out.println(player + " " + scoreManager.getScore());
         } else if (clearedLines == 2) {
             scoreManager.increaseScore(1200 * levelManager.getLevel());
+            System.out.println(player + " " + scoreManager.getScore());
         } else if (clearedLines == 3) {
             scoreManager.increaseScore(1800 * levelManager.getLevel());
+            System.out.println(player + " " + scoreManager.getScore());
         } else if (clearedLines == 4) {
             scoreManager.increaseScore(2000 * levelManager.getLevel());
+            System.out.println(player + " " + scoreManager.getScore());
         }
         if (totalLinesCleared >= 10) {
             levelManager.incrementLevel();
