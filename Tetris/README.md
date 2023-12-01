@@ -1,6 +1,7 @@
-## VEry WIP Tetris
+## Tetris
 
 TODO:
+
 - add scoring
 - add levels with increasing speed
 - add game over

@@ -507,6 +507,7 @@ public class TetrisLogic {
         }
         if (totalLinesCleared >= 10) {
             levelManager.incrementLevel();
+            pieceGravityMovement *= 0.8;
             totalLinesCleared = 0;
         }
         frame.drawLevel(this);
