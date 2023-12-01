@@ -37,11 +37,11 @@ public abstract class Tetromino {
         rotation = 0;
     }
 
-    public void setX(int x){
+    public void setX(int x) {
         this.x = x;
     }
 
-    public void setY(int y){
+    public void setY(int y) {
         this.y = y;
     }
 
@@ -224,7 +224,8 @@ public abstract class Tetromino {
 
     // Draws the current piece to the canvas. called inside DrawBoard
     public void draw(GraphicsContext gc, TetrisFrame frame) {
-        LinearGradient gradient = new LinearGradient(0, 1, 1, 0, true,  CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, color.darker()), new Stop(1, color) });
+        LinearGradient gradient = new LinearGradient(0, 1, 1, 0, true, CycleMethod.NO_CYCLE,
+                new Stop[] { new Stop(0, color.darker()), new Stop(1, color) });
         gc.setStroke(Color.WHITE);
         gc.setFill(gradient); // Set the color of the Tetromino
         for (int i = 0; i < shape.length; i++) {
