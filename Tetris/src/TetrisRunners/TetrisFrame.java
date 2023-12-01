@@ -110,9 +110,9 @@ public class TetrisFrame {
 
         heldCanvas = new Canvas(TILE_SIZE * WIDTH / 2, TILE_SIZE * WIDTH / 2); // canvas for the held piece
 
-        levelCanvas = new Canvas(50, 50); // canvas for level
+        levelCanvas = new Canvas(75, 50); // canvas for level
 
-        scoreCanvas = new Canvas(50, 50); // canvas for score
+        scoreCanvas = new Canvas(100, 50); // canvas for score
 
         // Create a border pane to hold the canvas and additional elements
         borderPane = new BorderPane();

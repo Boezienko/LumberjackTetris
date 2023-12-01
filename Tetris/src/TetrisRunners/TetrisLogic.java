@@ -37,10 +37,10 @@ public class TetrisLogic {
             tetrominoJFactory = new Tetromino_JFactory(), tetrominoZFactory = new Tetromino_ZFactory();
 
     // Instance of LevelManager to allow incrementing level
-    public static LevelManager levelManager = new LevelManager();
+    public static LevelManager levelManager;
 
     // Instance of LevelManager to allow incrementing score
-    public static ScoreManager scoreManager = new ScoreManager();
+    public static ScoreManager scoreManager;
 
     // queue that holds the current pieces for the 7 bag
     private Queue<Integer> tetrominoQueue = new LinkedList<>();
