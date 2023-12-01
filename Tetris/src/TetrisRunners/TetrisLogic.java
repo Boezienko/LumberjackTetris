@@ -31,6 +31,9 @@ public class TetrisLogic {
     private int heldPiece = 0;
     private int heldPieceCalled = 0;
 
+
+
+
     private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
             tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
             tetrominoTFactory = new Tetromino_TFactory(), tetrominoOFactory = new Tetromino_OFactory(),
@@ -71,6 +74,16 @@ public class TetrisLogic {
 
     // Constructor, gets the scene and the graphics context and starts the game
     public TetrisLogic(Scene scene, GraphicsContext gc, TetrisFrame frame, int player) {
+
+        // play title screen
+
+
+
+
+
+
+
+
         // Set up the JavaFX stuff
         this.scene = scene;
         this.gc = gc;
@@ -460,7 +473,6 @@ public class TetrisLogic {
                             frame.TILE_SIZE - 2);
                 }
             }
-            // System.out.println();
         }
     }
 
