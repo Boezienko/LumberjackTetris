@@ -49,6 +49,7 @@ public abstract class Tetromino {
     // if Imposible
     // Used in determining if the player can move, or if gravity can push the object
     // down
+    // if !canMove && getY()==0
     public boolean canMove(int dx, int dy, int[][] newShape) {
         // for loop iterating over each piece of the tetromino's array
         for (int i = 0; i < newShape.length; i++) {

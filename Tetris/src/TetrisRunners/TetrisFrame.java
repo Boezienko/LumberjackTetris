@@ -72,6 +72,7 @@ public class TetrisFrame {
 
     // Constructor. creates all the display elements other things will use
     public TetrisFrame(Stage stage, int player) {
+
         // pull in the stage argument
         this.stage = stage;
         this.player = player;
@@ -88,6 +89,7 @@ public class TetrisFrame {
         Pane canvasContainer = new Pane();
         canvas = new Canvas(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE); // canvas for the tetris game
         gc = canvas.getGraphicsContext2D();
+
         canvasBorder = new Rectangle(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE);
         canvasBorder.setFill(null);
         canvasBorder.setStroke(Color.BLUE);
@@ -126,18 +128,10 @@ public class TetrisFrame {
         // give the start and options buttons only to the first player
         if(player == 1){
             // Create a button and set its label
-            // Button startButton = new Button("Start Game");
-            // startButton.setPrefHeight(30);
-            // startButton.setPrefWidth(200);
-            StartButton startButton = new StartButton("Start Button", 20, 200);
+            Button startButton = new Button("Start Game");
+            startButton.setPrefHeight(30);
+            startButton.setPrefWidth(200);
             CheckBox enableSecondPlayerBox = new CheckBox("Enable 2 player Mode");
-
-            startButton.onPress(new EventHandler<ActionEvent>(){
-                @Override
-                public void handle(ActionEvent event){
-
-                }
-            });
             
             // Define an event handler to be called when the button is clicked
             startButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -381,4 +375,7 @@ public class TetrisFrame {
         }
         
     }
+
+    
+    
 }
