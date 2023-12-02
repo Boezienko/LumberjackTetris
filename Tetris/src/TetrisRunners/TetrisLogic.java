@@ -12,10 +12,8 @@ import TetrisHelper.Controls;
 import TetrisHelper.Factories.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.property.IntegerProperty;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -37,10 +35,10 @@ public class TetrisLogic {
             tetrominoJFactory = new Tetromino_JFactory(), tetrominoZFactory = new Tetromino_ZFactory();
 
     // Instance of LevelManager to allow incrementing level
-    public static LevelManager levelManager;
+    public LevelManager levelManager;
 
     // Instance of LevelManager to allow incrementing score
-    public static ScoreManager scoreManager;
+    public ScoreManager scoreManager;
 
     // queue that holds the current pieces for the 7 bag
     private Queue<Integer> tetrominoQueue = new LinkedList<>();
@@ -93,9 +91,14 @@ public class TetrisLogic {
         initializeGame();
     }
 
-    // TODO please for the love of god we gotta do something about this. this
-    // solution just feels wrong but it works oh so right
     private void handleControls() {
+        handleDirectionalControls();
+        handleRotate();
+        handleHardDrop();
+        handleShoulder();
+    }// end controls
+
+    private void handleDirectionalControls() {
         // left, move piece left,
         if (controls.getButtonStatus(player)[controls.LEFT]) {
             // DAS (delayed auto shift)
@@ -129,18 +132,16 @@ public class TetrisLogic {
             if (controls.getButtonHeldLength(controls.DOWN, player) == 0
                     || (controls.getButtonHeldLength(controls.DOWN, player) >= (gameUpdateSpeed / 4)
                             && controls.getButtonHeldLength(controls.DOWN, player) % 4 == 0)) {
-                if (!currentPiece.move(0, 1)) {
-                    // if (currentPiece.gravitySuccess(false)) {
-                    // currentPiece.addToBoard(board);
-                    // spawnTetromino();
-                    // }
-                }
+                currentPiece.move(0, 1);
             }
             controls.setButtonHeldLength(controls.DOWN, controls.getButtonHeldLength(controls.DOWN, player) + 1,
                     player);
         } else {
             controls.setButtonHeldLength(controls.DOWN, 0, player);
         }
+    }
+
+    private void handleRotate() {
         // B, rotates the piece clockwise
         if (controls.getButtonStatus(player)[controls.B]) {
             if (controls.getButtonHeldLength(controls.B, player) == 0
@@ -163,6 +164,9 @@ public class TetrisLogic {
         } else {
             controls.setButtonHeldLength(controls.A, 0, player);
         }
+    }
+
+    private void handleHardDrop() {
         // UP, hard drops the piece
         if (controls.getButtonStatus(player)[controls.UP]) {
             if (controls.getButtonHeldLength(controls.UP, player) == 0) {
@@ -175,6 +179,9 @@ public class TetrisLogic {
         } else {
             controls.setButtonHeldLength(controls.UP, 0, player);
         }
+    }
+
+    private void handleShoulder() {
         // SHOULDER, holds the current given piece
         if (controls.getButtonStatus(player)[controls.SHOULDER]) {
             if (controls.getButtonHeldLength(controls.SHOULDER, player) == 0) {
@@ -185,7 +192,7 @@ public class TetrisLogic {
         } else {
             controls.setButtonHeldLength(controls.SHOULDER, 0, player);
         }
-    }// end controls
+    }
 
     private void handlePausing() {
         // START, handles pausing
@@ -467,7 +474,6 @@ public class TetrisLogic {
     // Checks if any lines are filled. if so, remove them and push the rows above it
     // down
     private void clearLines() {
-        // TODO make multiplayer scoring work
         int clearedLines = 0;
         // Iterate over the board
         for (int y = TetrisFrame.HEIGHT - 1; y >= 0; y--) {
