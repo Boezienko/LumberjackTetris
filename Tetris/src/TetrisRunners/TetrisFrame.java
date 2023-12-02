@@ -2,14 +2,8 @@ package TetrisRunners;
 
 import TetrisHelper.Tetrominos.*;
 
-import java.util.logging.Level;
-
-import Leveling.LevelManager;
-import Leveling.ScoreManager;
 import TetrisHelper.Factories.*;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -20,13 +14,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class TetrisFrame {
@@ -149,18 +141,15 @@ public class TetrisFrame {
             CheckBox enableSecondPlayerBox = new CheckBox("Enable 2 player Mode");
             
             // Define an event handler to be called when the button is clicked
-            startButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    // call for the game logic to start
-                    startGame();
-                    // Disable the button (if enabled, keypress focus will leave the canvas when
-                    // left is pressed)
-                    startButton.setDisable(true);
-                    enableSecondPlayerBox.setDisable(true);
-                    // Set the focus to the canvas
-                    canvas.requestFocus();
-                }
+            startButton.setOnAction(event -> {
+                // call for the game logic to start
+                startGame();
+                // Disable the button (if enabled, keypress focus will leave the canvas when
+                // left is pressed)
+                startButton.setDisable(true);
+                enableSecondPlayerBox.setDisable(true);
+                // Set the focus to the canvas
+                canvas.requestFocus();
             });
 
             enableSecondPlayerBox.setOnAction(event -> {
@@ -233,7 +222,6 @@ public class TetrisFrame {
         } else {
             TILE_SIZE = borderPane.getCenter().getLayoutBounds().getWidth() / WIDTH;
         }
-        // System.out.println(TILE_SIZE);
         canvas.setHeight(HEIGHT * TILE_SIZE);
         canvas.setWidth(WIDTH * TILE_SIZE);
         heldCanvas.setHeight(TILE_SIZE * WIDTH / 2);
@@ -256,18 +244,12 @@ public class TetrisFrame {
 
     private void startGame() {
         // Start the game logic
+        // logic = new TetrisLogic
+        logic = new TetrisLogic(scene, gc, this, player);
+        onResize();
         if (player == 1 && otherTetrisFrame != null) {
-            logic = new TetrisLogic(scene, gc, this, player);
             otherTetrisFrame.startGame();
-            onResize();
-        } else if (player == 2) {
-            logic = new TetrisLogic(scene, gc, this, player);
-            onResize();
-        } else {
-            logic = new TetrisLogic(scene, gc, this, player);
-            onResize();
         }
-
     }
 
     public boolean getPaused() {
@@ -279,7 +261,6 @@ public class TetrisFrame {
             otherTetrisFrame.pause(false);
         }
         if (!paused) {
-            // logic.timeline.pause();
             gc.drawImage(new Image("/pause.png"), 0, 0, canvas.getWidth(), canvas.getWidth());
         }
         paused = !paused;

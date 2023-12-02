@@ -3,9 +3,6 @@ package TetrisHelper;
 
 // makes using controls in the actual games code muh easier
 
-import TetrisHelper.Tetrominos.*;
-import TetrisHelper.Factories.*;
-
 import com.studiohartman.jamepad.ControllerAxis;
 import com.studiohartman.jamepad.ControllerButton;
 import com.studiohartman.jamepad.ControllerIndex;
@@ -28,7 +25,8 @@ public class Controls {
     private int[] buttonHeldLength2;
 
     // easier references for the buttons boolean array
-    public final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, A = 4, B = 5, X = 6, Y = 7, START = 8, SHOULDER = 9;
+    public static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, A = 4, B = 5,
+            X = 6, Y = 7, START = 8, SHOULDER = 9;
 
     public Controls(Scene scene) {
         // make the array
