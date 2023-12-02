@@ -36,7 +36,6 @@ public abstract class Tetromino {
         y = 0;
         rotation = 0;
 
-        if(board[width][0])
     }
 
     public void setX(int x) {
