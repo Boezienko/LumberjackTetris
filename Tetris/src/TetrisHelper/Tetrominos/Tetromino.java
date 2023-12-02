@@ -27,7 +27,7 @@ public abstract class Tetromino {
 
     // Constructor. contains the shape of the piece, the color, and the current
     // state of the board
-    public Tetromino(int[][] shape, Color color, int[][] board) {
+    protected Tetromino(int[][] shape, Color color, int[][] board) {
         this.shape = shape;
         this.color = color;
         this.board = board;
@@ -39,11 +39,11 @@ public abstract class Tetromino {
         if(board[width][0])
     }
 
-    public void setX(int x){
+    public void setX(int x) {
         this.x = x;
     }
 
-    public void setY(int y){
+    public void setY(int y) {
         this.y = y;
     }
 
@@ -227,7 +227,8 @@ public abstract class Tetromino {
 
     // Draws the current piece to the canvas. called inside DrawBoard
     public void draw(GraphicsContext gc, TetrisFrame frame) {
-        LinearGradient gradient = new LinearGradient(0, 1, 1, 0, true,  CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, color.darker()), new Stop(1, color) });
+        LinearGradient gradient = new LinearGradient(0, 1, 1, 0, true, CycleMethod.NO_CYCLE,
+                new Stop[] { new Stop(0, color.darker()), new Stop(1, color) });
         gc.setStroke(Color.WHITE);
         gc.setFill(gradient); // Set the color of the Tetromino
         for (int i = 0; i < shape.length; i++) {
