@@ -308,7 +308,7 @@ public class TetrisFrame {
                 nextPiece = tetrominoIFactory.createTetromino(board);
                 break;
         }
-        nextPiece.setX(1);
+        nextPiece.setX(0);
         nextPiece.setY(1);
         // Clear previous "next-piece"
         rightGC.clearRect(0, 0, TILE_SIZE * WIDTH, TILE_SIZE * WIDTH);
@@ -360,7 +360,7 @@ public class TetrisFrame {
         }
 
         if (heldPiece != null) {
-            heldPiece.setX(1);
+            heldPiece.setX(0);
             heldPiece.setY(1);
             // Clear previous "held-piece"
             heldGC.clearRect(0, 0, TILE_SIZE * WIDTH, TILE_SIZE * WIDTH);
