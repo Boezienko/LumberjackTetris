@@ -1,14 +1,18 @@
 {
+  "java.project.sourcePaths": [
+    "Tetris/src"
+  ],
+  "java.project.outputPath": "bin",
   "java.project.referencedLibraries": [
     "lib/**/*.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.base.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.controls.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.fxml.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.graphics.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.media.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.swing.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx.web.jar",
-    "c:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib\\javafx-swt.jar",
+    "c:\\CodeIG\\SchoolWork\\3331\\javafx-sdk-20.0.2\\lib\\javafx.base.jar",
+    "c:\\CodeIG\\SchoolWork\\3331\\javafx-sdk-20.0.2\\lib\\javafx.controls.jar",
+    "c:\\CodeIG\\SchoolWork\\3331\\javafx-sdk-20.0.2\\lib\\javafx.fxml.jar",
+    "c:\\CodeIG\\SchoolWork\\3331\\javafx-sdk-20.0.2\\lib\\javafx.graphics.jar",
+    "c:\\CodeIG\\SchoolWork\\3331\\javafx-sdk-20.0.2\\lib\\javafx.media.jar",
+    "c:\\CodeIG\\SchoolWork\\3331\\javafx-sdk-20.0.2\\lib\\javafx.swing.jar",
+    "c:\\CodeIG\\SchoolWork\\3331\\javafx-sdk-20.0.2\\lib\\javafx.web.jar",
+    "c:\\CodeIG\\SchoolWork\\3331\\javafx-sdk-20.0.2\\lib\\javafx-swt.jar",
     "Tetris/lib/Jamepad.jar"
   ]
 }

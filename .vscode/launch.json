@@ -6,10 +6,17 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}",
+            "vmArgs": "--module-path C:\\CodeIG\\SchoolWork\\3331\\javafx-sdk-20.0.2\\lib --add-modules=javafx.controls"
+        },
+        {
+            "type": "java",
             "name": "Game",
             "request": "launch",
             "mainClass": "Game",
-            "vmArgs": "--module-path C:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib --add-modules javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path C:\\CodeIG\\SchoolWork\\3331\\javafx-sdk-20.0.2\\lib --add-modules=javafx.controls"
         }
     ]
 }
