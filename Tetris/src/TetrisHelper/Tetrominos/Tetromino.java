@@ -35,6 +35,8 @@ public abstract class Tetromino {
         x = TetrisFrame.WIDTH / 2 - shape[0].length / 2;
         y = 0;
         rotation = 0;
+
+        if(board[width][0])
     }
 
     public void setX(int x){

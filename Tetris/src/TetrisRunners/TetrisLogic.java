@@ -64,15 +64,6 @@ public class TetrisLogic {
     // Constructor, gets the scene and the graphics context and starts the game
     public TetrisLogic(Scene scene, GraphicsContext gc, TetrisFrame frame, int player) {
 
-        // play title screen
-
-
-
-
-
-
-
-
         // Set up the JavaFX stuff
         this.scene = scene;
         this.gc = gc;
