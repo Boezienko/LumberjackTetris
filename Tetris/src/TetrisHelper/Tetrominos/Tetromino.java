@@ -27,7 +27,7 @@ public abstract class Tetromino {
 
     // Constructor. contains the shape of the piece, the color, and the current
     // state of the board
-    public Tetromino(int[][] shape, Color color, int[][] board) {
+    protected Tetromino(int[][] shape, Color color, int[][] board) {
         this.shape = shape;
         this.color = color;
         this.board = board;
