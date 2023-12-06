@@ -15,6 +15,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -246,12 +247,25 @@ public class TetrisLogic {
                 currentPiece.move(0, 1);
                 // Piece successfully moved, reset the counter
                 currentPiece.gravitySuccess(true);
-            } else {
+            } else {// piece cannot move and so end timeline
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                timeline.stop();/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                //Label myLabel = new Label("You Lose");
+
+                //frame.drawLose();
+
+                // gc.getFill
+                // gc.fillRect(100, 100, frame.TILE_SIZE - 2, frame.TILE_SIZE - 2);
+                // gc.strokeRect(100, 100, frame.TILE_SIZE - 2, frame.TILE_SIZE - 2);
+
+
+                //IDK WHAT THIS WAS HERE FOR I COMMENTED IT OUT AND NOTHING CHANGED
                 // If gravitySuccess returns true, force drop the piece
                 if (currentPiece.gravitySuccess(false)) {
-                    currentPiece.addToBoard(board);
-                    spawnTetromino();
-                }
+                     currentPiece.addToBoard(board);
+                     spawnTetromino();
+                 }
             }
             incrementorPieceGravityMovement = 0;
         } else {

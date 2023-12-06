@@ -384,6 +384,13 @@ public class TetrisFrame {
         scoreGC.strokeText("" + logic.getScoreManager().getScore(), 10, 10);
     }
 
+    // public void drawLose(){
+    //     Rectangle loeRectangle = new Rectangle(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT / 6);
+    //     loeRectangle.setStroke(Color.BLACK);
+    //     loeRectangle.setFill(Color.FUCHSIA);
+    //     borderPane.getChildren().add(loeRectangle);
+    // }
+
     
     
 }
