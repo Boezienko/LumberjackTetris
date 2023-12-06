@@ -1,7 +1,7 @@
 package TetrisRunners;
 
 import TetrisHelper.Tetrominos.*;
-
+import TetrisHelper.LeaderboardManager;
 import TetrisHelper.Factories.*;
 
 import javafx.scene.Scene;
@@ -77,6 +77,7 @@ public class TetrisFrame {
 
     // Constructor. creates all the display elements other things will use
     public TetrisFrame(Stage stage, int player) {
+        LeaderboardManager lm = new LeaderboardManager();
 
         // pull in the stage argument
         this.stage = stage;
