@@ -77,7 +77,7 @@ public class TetrisFrame {
 
     // Constructor. creates all the display elements other things will use
     public TetrisFrame(Stage stage, int player) {
-        LeaderboardManager lm = new LeaderboardManager();
+        //LeaderboardManager lm = new LeaderboardManager();
 
         // pull in the stage argument
         this.stage = stage;

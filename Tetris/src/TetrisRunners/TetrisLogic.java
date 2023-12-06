@@ -248,20 +248,11 @@ public class TetrisLogic {
                 // Piece successfully moved, reset the counter
                 currentPiece.gravitySuccess(true);
             } else {// piece cannot move and so end timeline
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //timeline.stop();/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                //Label myLabel = new Label("You Lose");
-
-                //frame.drawLose();
-
-                // gc.getFill
-                // gc.fillRect(100, 100, frame.TILE_SIZE - 2, frame.TILE_SIZE - 2);
-                // gc.strokeRect(100, 100, frame.TILE_SIZE - 2, frame.TILE_SIZE - 2);
+                
+                // if current piece can't move and it is at the top
                 if(currentPiece.getY() < 1){
                     timeline.stop();
                 }
-
 
                 //IDK WHAT THIS WAS HERE FOR I COMMENTED IT OUT AND NOTHING CHANGED
                 // If gravitySuccess returns true, force drop the piece
