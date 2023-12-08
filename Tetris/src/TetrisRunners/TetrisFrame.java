@@ -56,6 +56,7 @@ public class TetrisFrame {
     private Rectangle canvasBorder;
     private VBox rightBox;
     private VBox leftBox;
+    private Button startButton;
 
     private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
             tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
@@ -136,7 +137,7 @@ public class TetrisFrame {
         // give the start and options buttons only to the first player
         if (player == 1) {
             // Create a button and set its label
-            Button startButton = new Button("Start Game");
+            startButton = new Button("Start Game");
             startButton.setPrefHeight(30);
             startButton.setPrefWidth(200);
             CheckBox enableSecondPlayerBox = new CheckBox("Enable 2 player Mode");
@@ -385,12 +386,22 @@ public class TetrisFrame {
         scoreGC.strokeText("" + logic.getScoreManager().getScore(), 10, 10);
     }
 
-    // public void drawLose(){
-    //     Rectangle loeRectangle = new Rectangle(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT / 6);
-    //     loeRectangle.setStroke(Color.BLACK);
-    //     loeRectangle.setFill(Color.FUCHSIA);
-    //     borderPane.getChildren().add(loeRectangle);
-    // }
+    public Button getStartButton(){
+        return startButton;
+    }
+
+    public void drawLose(){
+
+        gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.CYAN);
+        gc.clearRect((WIDTH)/10, (HEIGHT * 5), 500, 500);
+        gc.fillRect((WIDTH)/10, (HEIGHT * 5), 500, 500);
+        //gc.setStroke(Color.CRIMSON)
+        gc.setFont(Font.font("Courier New", FontWeight.LIGHT, 100));
+        gc.strokeText("You Lose",(WIDTH)/10 , (HEIGHT * 5));
+    }
+
+
 
     
     

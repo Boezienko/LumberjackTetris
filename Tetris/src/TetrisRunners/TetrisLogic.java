@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Queue;
 
 import Leveling.LevelManager;
+import Leveling.LoseManager;
 import Leveling.ScoreManager;
 import TetrisHelper.Tetrominos.*;
 import TetrisHelper.Controls;
@@ -247,14 +248,13 @@ public class TetrisLogic {
                 currentPiece.move(0, 1);
                 // Piece successfully moved, reset the counter
                 currentPiece.gravitySuccess(true);
-            } else {// piece cannot move and so end timeline
+            } else {
                 
-                // if current piece can't move and it is at the top
+                // if current piece can't move and it is at the top, end the game/////////////////////////////////////////////////////////////////////////////////////////////
                 if(currentPiece.getY() < 1){
-                    timeline.stop();
+                    LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
                 }
 
-                //IDK WHAT THIS WAS HERE FOR I COMMENTED IT OUT AND NOTHING CHANGED
                 // If gravitySuccess returns true, force drop the piece
                 if (currentPiece.gravitySuccess(false)) {
                      currentPiece.addToBoard(board);
