@@ -243,12 +243,14 @@ public class TetrisFrame {
     }
 
     private void startGame() {
+        borderPane.setLeft(null);
         // Start the game logic
         // logic = new TetrisLogic
         logic = new TetrisLogic(scene, gc, this, player);
         onResize();
         if (player == 1 && otherTetrisFrame != null) {
             otherTetrisFrame.startGame();
+            
         }
     }
 
@@ -383,6 +385,15 @@ public class TetrisFrame {
         scoreGC.setFont(Font.font("Courier New", FontWeight.LIGHT, 15));
         scoreGC.strokeText("" + logic.getScoreManager().getScore(), 10, 10);
     }
+
+
+    public TetrisLogic getOpponenTetrisLogic(){
+        if(otherTetrisFrame != null){
+            return otherTetrisFrame.logic;
+        }
+        return null;
+    }
+
 
     public Button getStartButton(){
         return startButton;
