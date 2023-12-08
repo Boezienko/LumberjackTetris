@@ -14,6 +14,7 @@ public class LoseManager {
         timeline.stop();
         frame.getStartButton().setDisable(false);
         frame.drawLose();
+        frame.borderPane.setLeft(frame.leftBox);
     
     }
     

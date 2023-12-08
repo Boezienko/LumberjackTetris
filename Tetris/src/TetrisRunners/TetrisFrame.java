@@ -51,10 +51,10 @@ public class TetrisFrame {
 
     private Stage stage;
     private Scene scene;
-    private BorderPane borderPane;
+    public BorderPane borderPane;
     private Rectangle canvasBorder;
     private VBox rightBox;
-    private VBox leftBox;
+    public VBox leftBox;
     private Button startButton;
 
     private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
