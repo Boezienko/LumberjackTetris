@@ -394,8 +394,8 @@ public class TetrisFrame {
 
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.BLACK);
-        gc.clearRect(0, 125, 510, 200);
-        gc.fillRect(0, 125, 510, 200);
+        //gc.clearRect(0, 127, (WIDTH) * 100, 200);
+        gc.fillRect(0, 125, (WIDTH) * 100, 200);
 
 
         //gc.fillRect((WIDTH)/10, (HEIGHT), 500, 500);
