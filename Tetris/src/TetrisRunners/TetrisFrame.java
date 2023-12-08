@@ -392,16 +392,18 @@ public class TetrisFrame {
 
     public void drawLose(){
 
+        double screenWidth = javafx.stage.Screen.getPrimary().getVisualBounds().getWidth();
+        double screenHeight = javafx.stage.Screen.getPrimary().getVisualBounds().getHeight();
+
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.BLACK);
-        //gc.clearRect(0, 127, (WIDTH) * 100, 200);
-        gc.fillRect(0, 125, (WIDTH) * 100, 200);
+        gc.fillRect(0, 125, (screenWidth) / 2, 200);
 
 
         //gc.fillRect((WIDTH)/10, (HEIGHT), 500, 500);
         gc.setStroke(Color.RED);
         gc.setFont(Font.font("Courier New", FontWeight.LIGHT, 100));
-        gc.strokeText("You Lose",(WIDTH)/10 , (HEIGHT * 12));
+        gc.strokeText("You Lose",(screenWidth) / 50 - 25,  (HEIGHT * 12));
     }
 
 
