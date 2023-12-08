@@ -1,7 +1,6 @@
 package TetrisRunners;
 
 import TetrisHelper.Tetrominos.*;
-
 import TetrisHelper.Factories.*;
 
 import javafx.scene.Scene;
@@ -56,6 +55,7 @@ public class TetrisFrame {
     private Rectangle canvasBorder;
     private VBox rightBox;
     private VBox leftBox;
+    private Button startButton;
 
     private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
             tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
@@ -135,7 +135,7 @@ public class TetrisFrame {
         // give the start and options buttons only to the first player
         if (player == 1) {
             // Create a button and set its label
-            Button startButton = new Button("Start Game");
+            startButton = new Button("Start Game");
             startButton.setPrefHeight(30);
             startButton.setPrefWidth(200);
             CheckBox enableSecondPlayerBox = new CheckBox("Enable 2 player Mode");
@@ -386,12 +386,32 @@ public class TetrisFrame {
         scoreGC.strokeText("" + logic.getScoreManager().getScore(), 10, 10);
     }
 
+
     public TetrisLogic getOpponenTetrisLogic(){
         if(otherTetrisFrame != null){
             return otherTetrisFrame.logic;
         }
         return null;
     }
+
+
+    public Button getStartButton(){
+        return startButton;
+    }
+
+    public void drawLose(){
+
+        gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.BLACK);
+        gc.fillRect(1, 125, (WIDTH) * 100, 200);
+
+        //gc.fillRect((WIDTH)/10, (HEIGHT), 500, 500);
+        gc.setStroke(Color.RED);
+        gc.setFont(Font.font("Courier New", FontWeight.LIGHT, WIDTH * 8));
+        gc.strokeText("You Lose",WIDTH,  (HEIGHT * 12));
+    }
+
+
 
     
     

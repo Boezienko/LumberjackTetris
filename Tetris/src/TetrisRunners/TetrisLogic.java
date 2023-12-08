@@ -7,6 +7,7 @@ import java.util.Queue;
 import java.util.Random;
 
 import Leveling.LevelManager;
+import Leveling.LoseManager;
 import Leveling.ScoreManager;
 import TetrisHelper.Tetrominos.*;
 import TetrisHelper.Controls;
@@ -16,6 +17,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -32,9 +34,6 @@ public class TetrisLogic {
     // Holds the held piece;
     private int heldPiece = 0;
     private int heldPieceCalled = 0;
-
-
-
 
     private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
             tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
@@ -250,11 +249,19 @@ public class TetrisLogic {
                 // Piece successfully moved, reset the counter
                 currentPiece.gravitySuccess(true);
             } else {
+                
+                // if current piece can't move and it is at the top, end the game/////////////////////////////////////////////////////////////////////////////////////////////
+                // if(currentPiece.getY() < 1 && currentPiece instanceof Tetromino_I ){
+                //     LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
+                // } else {
+                //     LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
+                // }
+
                 // If gravitySuccess returns true, force drop the piece
                 if (currentPiece.gravitySuccess(false)) {
-                    currentPiece.addToBoard(board);
-                    spawnTetromino();
-                }
+                     currentPiece.addToBoard(board);
+                     spawnTetromino();
+                 }
             }
             incrementorPieceGravityMovement = 0;
         } else {
@@ -338,6 +345,16 @@ public class TetrisLogic {
         // pulls a tetromino from the queue
         int spawnPiece = tetrominoQueue.poll();
         // create the correspondingf tetromino from the queue value
+
+        if(board[5][1]!=0 && currentPiece instanceof Tetromino_I ){
+            LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
+        } else if (board[5][0]!=0 || board[4][0]!=0 || board[6][0]!=0) {
+            LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
+        }
+
+ 
+
+
         switch (spawnPiece) {
             case 1:
                 // Create I Piece

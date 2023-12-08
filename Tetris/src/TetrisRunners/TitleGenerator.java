@@ -33,7 +33,7 @@ public class TitleGenerator {
         stage.setMaximized(true);
         stage.setAlwaysOnTop(true);
         stage.initStyle(StageStyle.UNDECORATED);
-        pane.setBackground(new Background(new BackgroundFill(Color.valueOf("#613293"), null, null)));
+        pane.setBackground(new Background(new BackgroundFill(Color.valueOf("#6100A6"), null, null)));
 
         // adding gif to imageView so gif plays
         titleGif = new ImageView(new Image("AxeGif2.gif"));
@@ -52,10 +52,6 @@ public class TitleGenerator {
         close = new PauseTransition(Duration.seconds(7.9));
         close.setOnFinished(e -> stage.close());
         close.play();
-    }
-
-    public void show(){
-        stage.show();
     }
     
 }
