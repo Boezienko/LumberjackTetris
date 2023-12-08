@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 
 import Leveling.LevelManager;
 import Leveling.ScoreManager;
@@ -20,6 +21,8 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.util.Duration;
+
+
 
 public class TetrisLogic {
     // Holds the actual gameboard
@@ -469,6 +472,14 @@ public class TetrisLogic {
                 }
             }
         }
+        /* 
+        for (int[] is : board) {
+            for (int num : is) {
+                System.out.print(num + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();*/
     }
 
     // Checks if any lines are filled. if so, remove them and push the rows above it
@@ -519,7 +530,45 @@ public class TetrisLogic {
         }
         frame.drawLevel(this);
         frame.drawScore(this);
+
+        if(frame.getOpponenTetrisLogic() != null && clearedLines != 0){
+            frame.getOpponenTetrisLogic().receiveSentLines(clearedLines - 1);
+        }
     }
+
+    public void receiveSentLines(int numLines) {
+        // if 0, don't do anything
+        if (numLines == 0) {
+            return;
+        }
+    
+        // find where the gap should be in the generated lines
+        int gapLocation = new Random().nextInt(TetrisFrame.WIDTH);
+    
+        // push the pieces up on the board by how many lines are sent
+        for (int i = 0; i < TetrisFrame.HEIGHT - numLines; i++) {
+            for (int j = 0; j < TetrisFrame.WIDTH; j++) {
+                board[j][i] = board[j][i + numLines];
+            }
+        }
+    
+        // add the grey blocks to the screen at the bottom
+        for (int i = TetrisFrame.HEIGHT - numLines; i < TetrisFrame.HEIGHT; i++) {
+            for (int j = 0; j < TetrisFrame.WIDTH; j++) {
+                if (j == gapLocation) {
+                    board[j][i] = 0;
+                } else {
+                    board[j][i] = 8;
+                }
+            }
+        }
+        // move the opponents piece upwards to cope
+        currentPiece.move(0, - numLines);
+    }
+    
+    
+    
+    
 
     // allows score to be retrieved on TetrisFrame
     public ScoreManager getScoreManager() {
