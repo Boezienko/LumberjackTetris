@@ -78,7 +78,7 @@ public class TetrisFrame {
 
     // Constructor. creates all the display elements other things will use
     public TetrisFrame(Stage stage, int player) {
-        //LeaderboardManager lm = new LeaderboardManager();
+        LeaderboardManager lm = new LeaderboardManager();
 
         // pull in the stage argument
         this.stage = stage;
@@ -392,19 +392,14 @@ public class TetrisFrame {
 
     public void drawLose(){
 
-        double screenWidth = javafx.stage.Screen.getPrimary().getVisualBounds().getWidth();
-        double screenHeight = javafx.stage.Screen.getPrimary().getVisualBounds().getHeight();
-
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.BLACK);
-        gc.fillRect(0, 125, (screenWidth) / 2, 200);
-        System.out.println(screenWidth);
-
+        gc.fillRect(1, 125, (WIDTH) * 100, 200);
 
         //gc.fillRect((WIDTH)/10, (HEIGHT), 500, 500);
         gc.setStroke(Color.RED);
-        gc.setFont(Font.font("Courier New", FontWeight.LIGHT, screenWidth/18));
-        gc.strokeText("You Lose",(screenWidth) / 50 - 25,  (HEIGHT * 12));
+        gc.setFont(Font.font("Courier New", FontWeight.LIGHT, WIDTH * 8));
+        gc.strokeText("You Lose",WIDTH,  (HEIGHT * 12));
     }
 
 
