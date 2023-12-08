@@ -251,9 +251,11 @@ public class TetrisLogic {
             } else {
                 
                 // if current piece can't move and it is at the top, end the game/////////////////////////////////////////////////////////////////////////////////////////////
-                if(currentPiece.getY() < 1){
-                    LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
-                }
+                // if(currentPiece.getY() < 1 && currentPiece instanceof Tetromino_I ){
+                //     LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
+                // } else {
+                //     LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
+                // }
 
                 // If gravitySuccess returns true, force drop the piece
                 if (currentPiece.gravitySuccess(false)) {
@@ -343,6 +345,16 @@ public class TetrisLogic {
         // pulls a tetromino from the queue
         int spawnPiece = tetrominoQueue.poll();
         // create the correspondingf tetromino from the queue value
+
+        if(board[5][1]!=0 && currentPiece instanceof Tetromino_I ){
+            LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
+        } else if (board[5][0]!=0 || board[4][0]!=0 || board[6][0]!=0) {
+            LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
+        }
+
+ 
+
+
         switch (spawnPiece) {
             case 1:
                 // Create I Piece

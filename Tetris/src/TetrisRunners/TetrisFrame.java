@@ -393,12 +393,15 @@ public class TetrisFrame {
     public void drawLose(){
 
         gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.CYAN);
-        gc.clearRect((WIDTH)/10, (HEIGHT * 5), 500, 500);
-        gc.fillRect((WIDTH)/10, (HEIGHT * 5), 500, 500);
-        //gc.setStroke(Color.CRIMSON)
+        gc.setFill(Color.BLACK);
+        gc.clearRect(0, 125, 510, 200);
+        gc.fillRect(0, 125, 510, 200);
+
+
+        //gc.fillRect((WIDTH)/10, (HEIGHT), 500, 500);
+        gc.setStroke(Color.RED);
         gc.setFont(Font.font("Courier New", FontWeight.LIGHT, 100));
-        gc.strokeText("You Lose",(WIDTH)/10 , (HEIGHT * 5));
+        gc.strokeText("You Lose",(WIDTH)/10 , (HEIGHT * 12));
     }
 
 
