@@ -310,7 +310,7 @@ public class TetrisFrame {
                 nextPiece = tetrominoIFactory.createTetromino(board);
                 break;
         }
-        nextPiece.setX(1);
+        nextPiece.setX(0);
         nextPiece.setY(1);
         // Clear previous "next-piece"
         rightGC.clearRect(0, 0, TILE_SIZE * WIDTH, TILE_SIZE * WIDTH);
@@ -362,7 +362,7 @@ public class TetrisFrame {
         }
 
         if (heldPiece != null) {
-            heldPiece.setX(1);
+            heldPiece.setX(0);
             heldPiece.setY(1);
             // Clear previous "held-piece"
             heldGC.clearRect(0, 0, TILE_SIZE * WIDTH, TILE_SIZE * WIDTH);
@@ -398,11 +398,12 @@ public class TetrisFrame {
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 125, (screenWidth) / 2, 200);
+        System.out.println(screenWidth);
 
 
         //gc.fillRect((WIDTH)/10, (HEIGHT), 500, 500);
         gc.setStroke(Color.RED);
-        gc.setFont(Font.font("Courier New", FontWeight.LIGHT, 100));
+        gc.setFont(Font.font("Courier New", FontWeight.LIGHT, screenWidth/18));
         gc.strokeText("You Lose",(screenWidth) / 50 - 25,  (HEIGHT * 12));
     }
 
