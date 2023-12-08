@@ -391,19 +391,13 @@ public class TetrisFrame {
     }
 
     public void drawLose(){
-
+        // drawing rectangle to go around words
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.BLACK);
         gc.fillRect(1, 125, (WIDTH) * 100, 200);
-
-        //gc.fillRect((WIDTH)/10, (HEIGHT), 500, 500);
+        // drawing words
         gc.setStroke(Color.RED);
         gc.setFont(Font.font("Courier New", FontWeight.LIGHT, WIDTH * 8));
         gc.strokeText("You Lose",WIDTH,  (HEIGHT * 12));
     }
-
-
-
-    
-    
 }

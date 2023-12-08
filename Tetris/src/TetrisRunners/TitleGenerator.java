@@ -20,6 +20,7 @@ public class TitleGenerator {
     private Scene scene;
     private Stage stage;
     PauseTransition close;
+    //private StageCallback stageCallback;
 
     public TitleGenerator(){
         //setting member variables
