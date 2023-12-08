@@ -30,9 +30,6 @@ public class TetrisLogic {
     private int heldPiece = 0;
     private int heldPieceCalled = 0;
 
-
-
-
     private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
             tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
             tetrominoTFactory = new Tetromino_TFactory(), tetrominoOFactory = new Tetromino_OFactory(),
