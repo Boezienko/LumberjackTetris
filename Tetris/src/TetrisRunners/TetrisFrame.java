@@ -419,7 +419,10 @@ public class TetrisFrame {
         gc.setFont(Font.font("Courier New", FontWeight.LIGHT, gc.getCanvas().getWidth() / 6));
         gc.strokeText(loseString,WIDTH,  (HEIGHT * 12));
 
-        public CheckBox getEnableSecondPlayerCheckBox(){
+        
+    }
+
+    public CheckBox getEnableSecondPlayerCheckBox(){
             return enableSecondPlayerBox;
         }
     
@@ -434,7 +437,7 @@ public class TetrisFrame {
         public void setGameOver(boolean gameOver){
             this.gameOver = gameOver;
         }
-    }
+    
 
     public void drawLeaderboard(ArrayList<Pair<String,Integer>> list){
 
@@ -472,7 +475,7 @@ public class TetrisFrame {
             gc.strokeRect(rectX + rectWidth, rectY, rectWidth, rectHeight);
             //add words to cell
             gc.setFont(Font.font("Courier New", FontWeight.LIGHT, gc.getCanvas().getWidth() / 20));
-            gc.strokeText(list.get(i).getValue().toString(),rectX + 10,  rectY + rectHeight - 20);
+            gc.strokeText(list.get(i).getValue().toString(),rectX + 10 + rectWidth,  rectY + rectHeight - 20);
 
             rectY += rectHeight;
         }

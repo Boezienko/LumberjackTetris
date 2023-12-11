@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 
 import Leveling.LevelManager;
 import Leveling.LoseManager;
@@ -357,10 +358,10 @@ public class TetrisLogic {
         // create the correspondingf tetromino from the queue value
 
         if(board[5][1]!=0 && currentPiece instanceof Tetromino_I ){
-            LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
+            LoseManager loseManager = new LoseManager(timeline, frame, frame.getOtherTetrisFrame(), true, player);
             LeaderboardManager leaderboardManager = new LeaderboardManager(frame);
         } else if (board[5][0]!=0 || board[4][0]!=0 || board[6][0]!=0) {
-            LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
+            LoseManager loseManager = new LoseManager(timeline, frame, frame.getOtherTetrisFrame(), true, player);
             LeaderboardManager leaderboardManager = new LeaderboardManager(frame);
         }
 
