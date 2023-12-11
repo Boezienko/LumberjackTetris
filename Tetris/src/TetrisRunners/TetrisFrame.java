@@ -1,6 +1,7 @@
 package TetrisRunners;
 
 import TetrisHelper.Tetrominos.*;
+import Leveling.LoseManager;
 
 import java.util.ArrayList;
 
@@ -49,6 +50,8 @@ public class TetrisFrame {
     // score canvas
     private Canvas scoreCanvas;
     private GraphicsContext scoreGC;
+    // stores if game over
+    private boolean gameOver = false;
 
     // Store a frame that may contain the other player. possibly
     private TetrisFrame otherTetrisFrame;
@@ -56,11 +59,12 @@ public class TetrisFrame {
 
     private Stage stage;
     private Scene scene;
-    private BorderPane borderPane;
+    public BorderPane borderPane;
     private Rectangle canvasBorder;
     private VBox rightBox;
-    private VBox leftBox;
+    public VBox leftBox;
     private Button startButton;
+    CheckBox enableSecondPlayerBox;
 
     private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
             tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
@@ -143,7 +147,7 @@ public class TetrisFrame {
             startButton = new Button("Start Game");
             startButton.setPrefHeight(30);
             startButton.setPrefWidth(200);
-            CheckBox enableSecondPlayerBox = new CheckBox("Enable 2 player Mode");
+            enableSecondPlayerBox = new CheckBox("Enable 2 player Mode");
             
             // Define an event handler to be called when the button is clicked
             startButton.setOnAction(event -> {
@@ -248,12 +252,14 @@ public class TetrisFrame {
     }
 
     private void startGame() {
+        borderPane.setLeft(null);
         // Start the game logic
         // logic = new TetrisLogic
         logic = new TetrisLogic(scene, gc, this, player);
         onResize();
         if (player == 1 && otherTetrisFrame != null) {
             otherTetrisFrame.startGame();
+            
         }
     }
 
@@ -389,11 +395,20 @@ public class TetrisFrame {
         scoreGC.strokeText("" + logic.getScoreManager().getScore(), 10, 10);
     }
 
+
+    public TetrisLogic getOpponenTetrisLogic(){
+        if(otherTetrisFrame != null){
+            return otherTetrisFrame.logic;
+        }
+        return null;
+    }
+
+
     public Button getStartButton(){
         return startButton;
     }
 
-    public void drawLose(){
+    public void drawLose(String loseString, Color textColor){
         // drawing rectangle to go around words
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.BLACK);
@@ -402,7 +417,23 @@ public class TetrisFrame {
         gc.setStroke(Color.RED);
         gc.setLineWidth(4);
         gc.setFont(Font.font("Courier New", FontWeight.LIGHT, gc.getCanvas().getWidth() / 6));
-        gc.strokeText("Game Over",WIDTH,  (HEIGHT * 12));
+        gc.strokeText(loseString,WIDTH,  (HEIGHT * 12));
+
+        public CheckBox getEnableSecondPlayerCheckBox(){
+            return enableSecondPlayerBox;
+        }
+    
+        public TetrisFrame getOtherTetrisFrame(){
+            return otherTetrisFrame;
+        }
+    
+        public boolean getGameOver(){
+            return gameOver;
+        }
+    
+        public void setGameOver(boolean gameOver){
+            this.gameOver = gameOver;
+        }
     }
 
     public void drawLeaderboard(ArrayList<Pair<String,Integer>> list){

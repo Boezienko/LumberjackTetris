@@ -47,6 +47,9 @@ public class TetrisLogic {
     // Instance of LevelManager to allow incrementing score
     private ScoreManager scoreManager;
 
+    // instance of lose manager, created when game is over
+    LoseManager loseManager;
+
     // queue that holds the current pieces for the 7 bag
     private Queue<Integer> tetrominoQueue = new LinkedList<>();
 
@@ -218,6 +221,7 @@ public class TetrisLogic {
     // Initializes the game. Creates the timeline, starts it, and then spawns the
     // first Tetromino
     private void initializeGame() {
+        frame.setGameOver(false);
 
         // Starts the movement of time. keyframe duration of 120 hz should update every
         // 8.33 ms
@@ -279,6 +283,11 @@ public class TetrisLogic {
 
         handleControls();
         controls.updateControls(player);
+
+        // handle a game over from other game
+        if(frame.getGameOver() && loseManager == null){
+            loseManager = new LoseManager(timeline, frame, frame.getOtherTetrisFrame(), false, player);
+        }
 
     }
 
@@ -355,9 +364,6 @@ public class TetrisLogic {
             LeaderboardManager leaderboardManager = new LeaderboardManager(frame);
         }
 
- 
-
-
         switch (spawnPiece) {
             case 1:
                 // Create I Piece
@@ -392,6 +398,14 @@ public class TetrisLogic {
                 currentPiece = tetrominoIFactory.createTetromino(board);
                 break;
         }
+
+        // check if the new current piece overlaps, and if so, throw a game over
+        if(board[5][1]!=0 && currentPiece instanceof Tetromino_I ){
+            loseManager = new LoseManager(timeline, frame, frame.getOtherTetrisFrame(), true, player);
+        } else if (board[5][0]!=0 || board[4][0]!=0 || board[6][0]!=0) {
+            loseManager = new LoseManager(timeline, frame, frame.getOtherTetrisFrame(), true, player);
+        }
+
         // If the queue is empty, fill it
         if (tetrominoQueue.isEmpty()) {
             tetrominoQueue = generateTetrominoQueue();
@@ -542,8 +556,42 @@ public class TetrisLogic {
         }
         frame.drawLevel(this);
         frame.drawScore(this);
+
+        if(frame.getOpponenTetrisLogic() != null && clearedLines != 0){
+            frame.getOpponenTetrisLogic().receiveSentLines(clearedLines - 1);
+        }
     }
 
+    public void receiveSentLines(int numLines) {
+        // if 0, don't do anything
+        if (numLines == 0) {
+            return;
+        }
+    
+        // find where the gap should be in the generated lines
+        int gapLocation = new Random().nextInt(TetrisFrame.WIDTH);
+    
+        // push the pieces up on the board by how many lines are sent
+        for (int i = 0; i < TetrisFrame.HEIGHT - numLines; i++) {
+            for (int j = 0; j < TetrisFrame.WIDTH; j++) {
+                board[j][i] = board[j][i + numLines];
+            }
+        }
+    
+        // add the grey blocks to the screen at the bottom
+        for (int i = TetrisFrame.HEIGHT - numLines; i < TetrisFrame.HEIGHT; i++) {
+            for (int j = 0; j < TetrisFrame.WIDTH; j++) {
+                if (j == gapLocation) {
+                    board[j][i] = 0;
+                } else {
+                    board[j][i] = 8;
+                }
+            }
+        }
+        // move the opponents piece upwards to cope
+        currentPiece.move(0, - numLines);
+    }
+    
     // allows score to be retrieved on TetrisFrame
     public ScoreManager getScoreManager() {
         return scoreManager;
