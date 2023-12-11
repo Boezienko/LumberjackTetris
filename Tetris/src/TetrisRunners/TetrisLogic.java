@@ -17,7 +17,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -45,6 +44,9 @@ public class TetrisLogic {
 
     // Instance of LevelManager to allow incrementing score
     private ScoreManager scoreManager;
+
+    // instance of lose manager, created when game is over
+    LoseManager loseManager;
 
     // queue that holds the current pieces for the 7 bag
     private Queue<Integer> tetrominoQueue = new LinkedList<>();
@@ -217,6 +219,7 @@ public class TetrisLogic {
     // Initializes the game. Creates the timeline, starts it, and then spawns the
     // first Tetromino
     private void initializeGame() {
+        frame.setGameOver(false);
 
         // Starts the movement of time. keyframe duration of 120 hz should update every
         // 8.33 ms
@@ -278,6 +281,11 @@ public class TetrisLogic {
 
         handleControls();
         controls.updateControls(player);
+
+        // handle a game over from other game
+        if(frame.getGameOver() && loseManager == null){
+            loseManager = new LoseManager(timeline, frame, frame.getOtherTetrisFrame(), false, player);
+        }
 
     }
 
@@ -344,17 +352,8 @@ public class TetrisLogic {
     private void spawnTetromino() {
         // pulls a tetromino from the queue
         int spawnPiece = tetrominoQueue.poll();
+        
         // create the correspondingf tetromino from the queue value
-
-        if(board[5][1]!=0 && currentPiece instanceof Tetromino_I ){
-            LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
-        } else if (board[5][0]!=0 || board[4][0]!=0 || board[6][0]!=0) {
-            LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
-        }
-
- 
-
-
         switch (spawnPiece) {
             case 1:
                 // Create I Piece
@@ -389,6 +388,14 @@ public class TetrisLogic {
                 currentPiece = tetrominoIFactory.createTetromino(board);
                 break;
         }
+
+        // check if the new current piece overlaps, and if so, throw a game over
+        if(board[5][1]!=0 && currentPiece instanceof Tetromino_I ){
+            loseManager = new LoseManager(timeline, frame, frame.getOtherTetrisFrame(), true, player);
+        } else if (board[5][0]!=0 || board[4][0]!=0 || board[6][0]!=0) {
+            loseManager = new LoseManager(timeline, frame, frame.getOtherTetrisFrame(), true, player);
+        }
+
         // If the queue is empty, fill it
         if (tetrominoQueue.isEmpty()) {
             tetrominoQueue = generateTetrominoQueue();

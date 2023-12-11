@@ -1,6 +1,7 @@
 package TetrisRunners;
 
 import TetrisHelper.Tetrominos.*;
+import Leveling.LoseManager;
 import TetrisHelper.Factories.*;
 
 import javafx.scene.Scene;
@@ -44,6 +45,8 @@ public class TetrisFrame {
     // score canvas
     private Canvas scoreCanvas;
     private GraphicsContext scoreGC;
+    // stores if game over
+    private boolean gameOver = false;
 
     // Store a frame that may contain the other player. possibly
     private TetrisFrame otherTetrisFrame;
@@ -56,6 +59,7 @@ public class TetrisFrame {
     private VBox rightBox;
     public VBox leftBox;
     private Button startButton;
+    CheckBox enableSecondPlayerBox;
 
     private Tetromino_Factory tetrominoIFactory = new Tetromino_IFactory(),
             tetrominoSFactory = new Tetromino_SFactory(), tetrominoLFactory = new Tetromino_LFactory(),
@@ -138,7 +142,7 @@ public class TetrisFrame {
             startButton = new Button("Start Game");
             startButton.setPrefHeight(30);
             startButton.setPrefWidth(200);
-            CheckBox enableSecondPlayerBox = new CheckBox("Enable 2 player Mode");
+            enableSecondPlayerBox = new CheckBox("Enable 2 player Mode");
             
             // Define an event handler to be called when the button is clicked
             startButton.setOnAction(event -> {
@@ -399,16 +403,32 @@ public class TetrisFrame {
         return startButton;
     }
 
-    public void drawLose(){
+    public void drawLose(String loseString, Color textColor){
 
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.BLACK);
         gc.fillRect(1, 125, (WIDTH) * 100, 200);
 
         //gc.fillRect((WIDTH)/10, (HEIGHT), 500, 500);
-        gc.setStroke(Color.RED);
+        gc.setStroke(textColor);
         gc.setFont(Font.font("Courier New", FontWeight.LIGHT, WIDTH * 8));
-        gc.strokeText("You Lose",WIDTH,  (HEIGHT * 12));
+        gc.strokeText(loseString, WIDTH, (HEIGHT * 12));
+    }
+
+    public CheckBox getEnableSecondPlayerCheckBox(){
+        return enableSecondPlayerBox;
+    }
+
+    public TetrisFrame getOtherTetrisFrame(){
+        return otherTetrisFrame;
+    }
+
+    public boolean getGameOver(){
+        return gameOver;
+    }
+
+    public void setGameOver(boolean gameOver){
+        this.gameOver = gameOver;
     }
 
 
