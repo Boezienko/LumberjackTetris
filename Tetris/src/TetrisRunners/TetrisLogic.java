@@ -588,6 +588,13 @@ public class TetrisLogic {
         }
         // move the opponents piece upwards to cope
         currentPiece.move(0, - numLines);
+
+        // check if the new current piece overlaps, and if so, throw a game over
+        if(board[5][1]!=0 && currentPiece instanceof Tetromino_I ){
+            loseManager = new LoseManager(timeline, frame, frame.getOtherTetrisFrame(), true, player);
+        } else if (board[5][0]!=0 || board[4][0]!=0 || board[6][0]!=0) {
+            loseManager = new LoseManager(timeline, frame, frame.getOtherTetrisFrame(), true, player);
+        }
     }
     
     // allows score to be retrieved on TetrisFrame
