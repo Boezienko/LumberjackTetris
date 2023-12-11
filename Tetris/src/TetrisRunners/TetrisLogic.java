@@ -583,10 +583,6 @@ public class TetrisLogic {
         currentPiece.move(0, - numLines);
     }
     
-    
-    
-    
-
     // allows score to be retrieved on TetrisFrame
     public ScoreManager getScoreManager() {
         return scoreManager;
