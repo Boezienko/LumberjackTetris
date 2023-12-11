@@ -240,11 +240,6 @@ public class TetrisLogic {
             return;
         }
 
-        // handle a game over from other game
-        if(frame.getGameOver()){
-            loseManager = new LoseManager(timeline, frame, frame.getOtherTetrisFrame(), false, player);
-        }
-
         // Ensures that the screen is the right size always.
         frame.onResize();
 
@@ -286,6 +281,11 @@ public class TetrisLogic {
 
         handleControls();
         controls.updateControls(player);
+
+        // handle a game over from other game
+        if(frame.getGameOver() && loseManager == null){
+            loseManager = new LoseManager(timeline, frame, frame.getOtherTetrisFrame(), false, player);
+        }
 
     }
 
