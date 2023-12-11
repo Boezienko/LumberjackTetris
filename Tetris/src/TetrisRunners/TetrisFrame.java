@@ -1,6 +1,9 @@
 package TetrisRunners;
 
 import TetrisHelper.Tetrominos.*;
+
+import java.util.ArrayList;
+
 import TetrisHelper.Factories.*;
 
 import javafx.scene.Scene;
@@ -19,6 +22,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 public class TetrisFrame {
     // Static ints used for sizes
@@ -32,6 +36,7 @@ public class TetrisFrame {
     // game canvas
     private Canvas canvas;
     private GraphicsContext gc;
+    private Pane canvasContainer;
     // next piece canvas
     private Canvas rightCanvas;
     private GraphicsContext rightGC;
@@ -91,7 +96,7 @@ public class TetrisFrame {
         }
 
         // Set the canvas to the given size. create gc reference for convenience
-        Pane canvasContainer = new Pane();
+        canvasContainer = new Pane();
         canvas = new Canvas(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE); // canvas for the tetris game
         gc = canvas.getGraphicsContext2D();
 
@@ -392,10 +397,58 @@ public class TetrisFrame {
         // drawing rectangle to go around words
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.BLACK);
-        gc.fillRect(1, 125, (WIDTH) * 100, 200);
+        gc.fillRect(1, 125, gc.getCanvas().getWidth(), gc.getCanvas().getWidth() / 3);
         // drawing words
         gc.setStroke(Color.RED);
-        gc.setFont(Font.font("Courier New", FontWeight.LIGHT, WIDTH * 8));
-        gc.strokeText("You Lose",WIDTH,  (HEIGHT * 12));
+        gc.setLineWidth(4);
+        gc.setFont(Font.font("Courier New", FontWeight.LIGHT, gc.getCanvas().getWidth() / 6));
+        gc.strokeText("Game Over",WIDTH,  (HEIGHT * 12));
+    }
+
+    public void drawLeaderboard(ArrayList<Pair<String,Integer>> list){
+
+        System.out.println("Here");
+
+        // rectangle dimensions
+        double rectX = gc.getCanvas().getWidth()/3 - 100;
+        double rectY = 300; // initial
+        double rectWidth = 180;
+        double rectHeight = 60;
+
+        for (int i = 0; i < list.size(); i++){
+
+            // draw cell 1
+            gc = canvas.getGraphicsContext2D();
+            gc.setFill(Color.YELLOW);
+            gc.fillRect(rectX, rectY, rectWidth, rectHeight);
+            // draw border
+            gc.setStroke(Color.BLACK);
+            gc.setLineWidth(5);
+            gc.strokeRect(rectX, rectY, rectWidth, rectHeight);
+            // add words to cell
+            gc.setStroke(Color.BLACK);
+            gc.setLineWidth(2);
+            gc.setFont(Font.font("Courier New", FontWeight.LIGHT, gc.getCanvas().getWidth() / 20));
+            gc.strokeText(list.get(i).getKey(),rectX + 10,  rectY + rectHeight - 20);
+
+            // draw cell 2
+            gc = canvas.getGraphicsContext2D();
+            gc.setFill(Color.YELLOW);
+            gc.fillRect(rectX + rectWidth, rectY, rectWidth, rectHeight);
+            // draw border
+            gc.setStroke(Color.BLACK);
+            gc.setLineWidth(2);
+            gc.strokeRect(rectX + rectWidth, rectY, rectWidth, rectHeight);
+            //add words to cell
+            gc.setFont(Font.font("Courier New", FontWeight.LIGHT, gc.getCanvas().getWidth() / 20));
+            gc.strokeText(list.get(i).getValue().toString(),rectX + 10,  rectY + rectHeight - 20);
+
+            rectY += rectHeight;
+        }
+
+
+
+        
+
     }
 }

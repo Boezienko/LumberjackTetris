@@ -13,8 +13,7 @@ public class LoseManager {
     public LoseManager(Tetromino tetromino, Timeline timeline, TetrisFrame frame){
         timeline.stop();
         frame.getStartButton().setDisable(false);
-        frame.drawLose();
-    
+        frame.drawLose();   
     }
     
 }

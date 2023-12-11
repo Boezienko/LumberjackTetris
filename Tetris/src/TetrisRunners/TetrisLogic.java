@@ -10,6 +10,7 @@ import Leveling.LoseManager;
 import Leveling.ScoreManager;
 import TetrisHelper.Tetrominos.*;
 import TetrisHelper.Controls;
+import TetrisHelper.LeaderboardManager;
 import TetrisHelper.Factories.*;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -348,8 +349,10 @@ public class TetrisLogic {
 
         if(board[5][1]!=0 && currentPiece instanceof Tetromino_I ){
             LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
+            LeaderboardManager leaderboardManager = new LeaderboardManager(frame);
         } else if (board[5][0]!=0 || board[4][0]!=0 || board[6][0]!=0) {
             LoseManager loseManager = new LoseManager(currentPiece, timeline, frame);
+            LeaderboardManager leaderboardManager = new LeaderboardManager(frame);
         }
 
  

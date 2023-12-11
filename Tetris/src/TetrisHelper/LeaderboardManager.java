@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
+import TetrisRunners.TetrisFrame;
 import javafx.util.Pair;
 
 public class LeaderboardManager {
@@ -15,57 +16,49 @@ public class LeaderboardManager {
     ArrayList<String> names = new ArrayList<>();
     // to hold the scores associated to the name
     ArrayList<Integer> scores = new ArrayList<>();
-    ArrayList<Pair<String,Integer>> plist = new ArrayList<>();
+    ArrayList<Pair<String,Integer>> pairList = new ArrayList<>();
 
     String curLine;
     String[] values;
 
     File text;
     
-    public LeaderboardManager(){        
+    public LeaderboardManager(TetrisFrame frame){        
         try{
             text = new File("C:\\Users\\boeaz\\Documents\\Tetris\\Tetris\\src\\TetrisHelper\\HS.csv");
             Scanner scnr = new Scanner(text);
             while(scnr.hasNextLine()){
                 curLine = scnr.nextLine();
                 values = curLine.split(",");
-                plist.add(new Pair(values[0], Integer.parseInt(values[1])));
+                pairList.add(new Pair(values[0], Integer.parseInt(values[1])));
             }
             scnr.close();
         } catch(IOException e){
             System.out.println("could not read HS.csv");
             e.printStackTrace();
         }
-
-        for(Pair<String, Integer> pair : plist){
-            System.out.println(pair);
-        }
-        System.out.println("/////////////////////////////////////////////");
-        sort(plist);
+        
+        frame.drawLeaderboard(pairList);
     }
 
-    public void sort(ArrayList<Pair<String,Integer>> list){
-
-
-        int n = list.size();
+    public void bubbleSort(ArrayList<Pair<String,Integer>> list){
         
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-                // Compare the Integer values in reverse order (from largest to smallest)
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = 0; j < list.size() - i - 1; j++) {
+                // compare values from largest to smallest
                 if (list.get(j).getValue() < list.get(j + 1).getValue()) {
-                    // Swap elements if they are in the wrong order
+                    // swap elements if in wrong order
                     Pair<String, Integer> temp = list.get(j);
                     list.set(j, list.get(j + 1));
                     list.set(j + 1, temp);
                 }
             }
         }
-
-        for(Pair<String, Integer> pair : plist){
-            System.out.println(pair);
-        }
-
-        
-
     }
+
+    public ArrayList<Pair<String,Integer>> getLeaderboard(){
+        return pairList;
+    }
+
+    
 }

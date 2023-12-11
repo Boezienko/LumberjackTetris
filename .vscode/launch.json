@@ -9,7 +9,7 @@
             "name": "Game",
             "request": "launch",
             "mainClass": "Game",
-            "vmArgs": "--module-path C:\\Users\\Sydney\\Documents\\School\\Singh_OOP_Methods\\javafx-sdk-20.0.2\\lib --add-modules javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path C:\\Users\\boeaz\\Documents\\CourseWork\\ObjectOrientedProgrammingMethods\\javafx-sdk-20.0.2\\lib --add-modules javafx.controls,javafx.fxml"
         }
     ]
 }

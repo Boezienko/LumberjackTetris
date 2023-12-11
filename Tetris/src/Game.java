@@ -12,7 +12,7 @@ public class Game extends Application {
     // Starts the Magic
     @Override
     public void start(Stage stage) throws Exception {
-        TitleGenerator titleScreen = new TitleGenerator();
+        //TitleGenerator titleScreen = new TitleGenerator();
 
         TetrisFrame player1 = new TetrisFrame(stage, 1);
     }
