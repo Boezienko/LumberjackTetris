@@ -181,6 +181,7 @@ public class TetrisFrame {
                     secondStage.close();
                     secondStage = null;
                     stage.setMaximized(true);
+                    otherTetrisFrame = null;
                 }
             });
 
